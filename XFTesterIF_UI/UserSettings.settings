@@ -1,0 +1,42 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="XFTesterIF_UI" GeneratedClassName="UserSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="TesterIFProtocol" Type="System.String" Scope="User">
+      <Value Profile="(Default)">MTGPIB</Value>
+    </Setting>
+    <Setting Name="TestHandlingMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Synchronous</Value>
+    </Setting>
+    <Setting Name="TesterIFType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">NIGPIB</Value>
+    </Setting>
+    <Setting Name="DatabaseType" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Sqlite</Value>
+    </Setting>
+    <Setting Name="GpibCardAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="RS232PortAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="HandlerAddress" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="CommTimeout" Type="System.String" Scope="User">
+      <Value Profile="(Default)">60</Value>
+    </Setting>
+    <Setting Name="MTDUT_CS1" Type="System.String" Scope="User">
+      <Value Profile="(Default)">6</Value>
+    </Setting>
+    <Setting Name="MTDUT_CS2" Type="System.String" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="MTDUT_CS3" Type="System.String" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="MTDUT_CS4" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

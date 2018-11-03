@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace XFTesterIF
+namespace XFTesterIF.TesterIFConnection
 {
-    public class Class1
+    public class RSRS232Processor
     {
     }
 }
