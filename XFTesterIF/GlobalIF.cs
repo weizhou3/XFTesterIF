@@ -73,15 +73,7 @@ namespace XFTesterIF
             return  $"ASRL{GpibCardAddress}::INSTR";
         }
 
-        public static string ReplaceCommonEscapeSequences(string s)
-        {
-            return s.Replace("\\n", "\n").Replace("\\r", "\r");
-        }
 
-        public static string InsertCommonEscapeSequences(string s)
-        {
-            return s.Replace("\n", "\\n").Replace("\r", "\\r");
-        }
 
         #region data manipulation methods
         public static string HexConvert2(string str2)//convert binary string to hex string

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using XFTesterIF;
+using NationalInstruments.Visa;
 
 namespace XFTesterIF.TesterIFConnection
 {
@@ -12,7 +13,7 @@ namespace XFTesterIF.TesterIFConnection
     {
         public string Protocol { get; set; }
         public string IFport { get; set; }
-        public string ReadFromTester()
+        public string ReadFromTester(MessageBasedSession messagebasedsession)
         {
             throw new NotImplementedException();
         }

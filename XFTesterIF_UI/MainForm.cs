@@ -21,18 +21,12 @@ namespace XFTesterIF_UI
         public MainForm()
         {
             InitializeComponent();
+            SetupControlState(false);
         }
 
         private void btnGpibON_Click(object sender, EventArgs e)
         {
-            //disable all text boxes
-            TBoxAddress.Enabled = false;
-            TBoxGpibCardAddr.Enabled = false;
-            TBoxTimeOut.Enabled = false;
-            TBoxCS1.Enabled = false;
-            TBoxCS2.Enabled = false;
-            TBoxCS3.Enabled = false;
-            TBoxCS4.Enabled = false;
+            disableSettingInput();
 
             using (var rmSession = new NationalInstruments.Visa.ResourceManager())
             {
@@ -56,7 +50,32 @@ namespace XFTesterIF_UI
                     Cursor.Current = Cursors.Default;
                 }
             }
+            
+            //TODO - add RunTestComm BGW
+            if (!bgwRunTest.IsBusy)
+            {
+                bgwRunTest.RunWorkerAsync();
+            }
+
+            
+            //TODO - open PLC port, turn on timer to SyncPLC(). inside timer call BGW when needed
+
+
         }
+
+        private void btnGpibOFF_Click(object sender, EventArgs e)
+        {
+            SetupControlState(false);
+            mbSession.Dispose();
+            if (bgwRunTest.IsBusy)
+            {
+                bgwRunTest.CancelAsync();
+                lblRdProgress.Text = "Stopped";
+            }
+            enableSettingInput();
+        }
+
+
 
         private void SetupControlState(bool isSessionOpen)
         {
@@ -77,14 +96,18 @@ namespace XFTesterIF_UI
                 if (np.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     T.Text = np.value;
+                    saveAllSettings();
+                    updateMtDUT_CS();
                 }
             }
         }
 
-        private void TBox_TextChanged(object sender, EventArgs e)
-        {
-            saveAllSettings();
-        }
+        //private void TBox_TextChanged(object sender, EventArgs e)
+        //{
+        //    saveAllSettings();
+        //    updateMtDUT_CS();
+        //}
+
         private void saveAllSettings()
         {
             UserSettings.Default.HandlerAddress = TBoxAddress.Text;
@@ -94,6 +117,11 @@ namespace XFTesterIF_UI
             UserSettings.Default.MTDUT_CS2 = TBoxCS2.Text;
             UserSettings.Default.MTDUT_CS3 = TBoxCS3.Text;
             UserSettings.Default.MTDUT_CS4 = TBoxCS4.Text;
+            if (MTCB.Checked)
+                UserSettings.Default.TesterIFProtocol = "MTGPIB";
+            if (DeltaCB.Checked)
+                UserSettings.Default.TesterIFProtocol = "RSGPIB";
+
         }
 
         private void loadAllSettings()
@@ -107,6 +135,33 @@ namespace XFTesterIF_UI
             TBoxCS4.Text = UserSettings.Default.MTDUT_CS4;
             MTCB.Checked = (UserSettings.Default.TesterIFProtocol == "MTGPIB");
             DeltaCB.Checked = (UserSettings.Default.TesterIFProtocol == "RSGPIB");
+            updateMtDUT_CS();
+        }
+
+        private void disableSettingInput()
+        {
+            TBoxAddress.Enabled = false;
+            TBoxGpibCardAddr.Enabled = false;
+            TBoxTimeOut.Enabled = false;
+            TBoxCS1.Enabled = false;
+            TBoxCS2.Enabled = false;
+            TBoxCS3.Enabled = false;
+            TBoxCS4.Enabled = false;
+            DeltaCB.Enabled = false;
+            MTCB.Enabled = false;
+        }
+
+        private void enableSettingInput()
+        {
+            TBoxAddress.Enabled = true;
+            TBoxGpibCardAddr.Enabled = true;
+            TBoxTimeOut.Enabled = true;
+            TBoxCS1.Enabled = true;
+            TBoxCS2.Enabled = true;
+            TBoxCS3.Enabled = true;
+            TBoxCS4.Enabled = true;
+            DeltaCB.Enabled = true;
+            MTCB.Enabled = true;
         }
 
         private void MTCB_CheckedChanged(object sender, EventArgs e)
@@ -146,5 +201,97 @@ namespace XFTesterIF_UI
                 CB.BackColor = Color.LightGray;
             }
         }
+
+        private void updateMtDUT_CS()
+        {
+
+            
+            MTGpibProcessor.DUT_CS[0] = int.Parse(UserSettings.Default.MTDUT_CS1);
+            MTGpibProcessor.DUT_CS[1] = int.Parse(UserSettings.Default.MTDUT_CS2);
+            MTGpibProcessor.DUT_CS[2] = int.Parse(UserSettings.Default.MTDUT_CS3);
+            MTGpibProcessor.DUT_CS[3] = int.Parse(UserSettings.Default.MTDUT_CS4);
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            saveAllSettings();
+        }
+
+        private void bgwRunTest_DoWork(object sender, DoWorkEventArgs e)
+        {
+            #region test code
+
+            try
+            {
+                int i = 0;
+                int total = 10;
+                int index = 1;
+                List<string> RtnStr = new List<string>();
+                do
+                {
+                    if (!bgwRunTest.CancellationPending)
+                    {
+
+                        //double percentage = i / total * 100;
+                        double percentage = index++ * 100 / total;
+                        bgwRunTest.ReportProgress((int)percentage, string.Format("Reading data {0}", i));
+                        string StrRd = GlobalIF.IFConnection.ReadFromTester(mbSession);
+                        //string StrRd = GlobalIF.IFConnection.RunTestSequence(mbSession);
+
+                        RtnStr.Add(StrRd);
+                        e.Result = RtnStr;
+
+                        //Thread.Sleep(500);
+                        i = i + 1;
+                    }
+                    else if (bgwRunTest.CancellationPending)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+
+                } while (i < total);
+
+            }
+            catch (Exception exp)
+            {
+                bgwRunTest.CancelAsync();
+                MessageBox.Show(exp.Message, "Message", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            #endregion
+
+
+        }
+
+        private void bgwRunTest_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            lblRdProgress.Text = $"Reading {e.ProgressPercentage}";
+            progressRd.Value = e.ProgressPercentage;
+            progressRd.Update();
+            
+        }
+
+        private void bgwRunTest_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error == null)
+            {
+                if (e.Cancelled)
+                {
+                    ErrMsgBox.AppendText("Operation timed out or cancelled by user");
+                }
+                else
+                {
+                    List<string>result=(List<string>)e.Result;
+                    ErrMsgBox.AppendText("Operation completed");
+                    ErrMsgBox.AppendText($"Recevied string: {result.FirstOrDefault()}");
+                }
+            }
+            else
+            {
+                ErrMsgBox.AppendText("Operation failed");
+            }
+        }
+
+
     }
 }

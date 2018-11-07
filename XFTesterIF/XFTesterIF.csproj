@@ -57,6 +57,7 @@
     <Compile Include="TesterIFConnection\ITesterIFConnection.cs" />
     <Compile Include="TesterIFConnection\MTGpibProcessor.cs" />
     <Compile Include="TesterIFConnection\NIGpibConnector.cs" />
+    <Compile Include="TesterIFConnection\NIGpibHelper.cs" />
     <Compile Include="TesterIFConnection\RS232Connector.cs" />
     <Compile Include="TesterIFConnection\RSGpibProcessor.cs" />
     <Compile Include="TesterIFConnection\RSRS232Processor.cs" />
