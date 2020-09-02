@@ -69,13 +69,15 @@ namespace XFTesterIF
                 {
 
                     //await Task.Delay(500);
+                    //1.get SOT from PLC
                     int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession);
 
+                    //2.Send SOT to tester and wait for result
                     GpibCommDataModel TestResult = await GlobalIF.TesterIF.GetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
                     //GpibCommDataModel TestResult = await GlobalIF.TesterIF.SimulatingGetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
 
+                    //3. parse test result and send to PLC
                     TestResult = parseTestResult(TestResult);
-
                     GlobalIF.plcTestingConnection.SendResult(TestResult);
                 }
                 catch (NotImplementedException exp)
