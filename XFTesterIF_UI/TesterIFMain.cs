@@ -365,9 +365,7 @@ namespace XFTesterIF_UI
             catch (Exception exp)
             {
                 expMsg = exp.Message;
-                //return false;//TODO- debugging, to uncomment
-                return true;//TODO- debugging, to comment
-
+                return false;
             }
                             
 
