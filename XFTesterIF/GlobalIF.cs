@@ -6,20 +6,27 @@ using System.Text;
 using System.Threading.Tasks;
 using XFTesterIF;
 using XFTesterIF.TesterIFConnection;
+using System.Windows.Forms;
+using System.IO.Ports;
+using XFTesterIF.PLCConnection;
 
 namespace XFTesterIF
 {
     public static class GlobalIF
     {
-        public static ITesterIFConnection IFConnection { get; private set; }
+        public static ITesterIFConnection TesterIF { get; private set; }
+        public static IPlcTestingConnection plcTestingConnection { get; private set; }
         
         public static void InitializeIFConnections(TesterIFType IFType, TesterIFProtocol IFProtocol)
         {
+            OmronFINsTestingConnector fINsTestingConnector = new OmronFINsTestingConnector();
+            plcTestingConnection = fINsTestingConnector;
+
             switch (IFType)
             {
                 case TesterIFType.NIGPIB:
-                    NIGpibConnector gpib = new NIGpibConnector();
-                    IFConnection = gpib;
+                    MT_NIGpibConnector gpib = new MT_NIGpibConnector();
+                    TesterIF = gpib;
                     //gpib.IFport = IFport;
 
                     //switch (IFProtocol)
@@ -40,7 +47,7 @@ namespace XFTesterIF
                     break;
                 case TesterIFType.RS232:
                     RS232Connector rs232 = new RS232Connector();
-                    IFConnection = rs232;
+                    TesterIF = rs232;
                     //rs232.IFport = IFport;
 
                     //switch (IFProtocol)
@@ -61,6 +68,7 @@ namespace XFTesterIF
                 default:
                     break;
             }
+
         }
         
         public static string AppKeyLookup(string key)
@@ -73,6 +81,56 @@ namespace XFTesterIF
             return  $"ASRL{GpibCardAddress}::INSTR";
         }
 
+        public static TesterIFType GetIFType(this string str)
+        {
+            switch (str)
+            {
+                case "NIGPIB":
+                    return TesterIFType.NIGPIB;
+                case "RS232":
+                    return TesterIFType.RS232;
+                case "TTL":
+                    return TesterIFType.TTL;
+                default:
+                    return TesterIFType.TTL;
+            }
+        }
+
+        public static TesterIFProtocol GetIFProtocol(this string str)
+        {
+            switch (str)
+            {
+                case "MTGPIB":
+                    return TesterIFProtocol.MTGPIB;
+                case "RSGPIB":
+                    return TesterIFProtocol.RSGPIB;
+                case "RSRS232":
+                    return TesterIFProtocol.RSRS232;
+                case "TTL":
+                    return TesterIFProtocol.TTL;
+                default:
+                    return TesterIFProtocol.TTL;
+            }
+        }
+
+        private delegate void SetControlPropThreadSafeDelegate(Control control, string propertyName, object propertyValue);
+
+        public static void SetControlPropThreadSafe(Control control, string propName, object propValue)
+        {
+            if (control.InvokeRequired)
+            {
+                control.Invoke(new SetControlPropThreadSafeDelegate(SetControlPropThreadSafe), 
+                    new object[] { control, propName, propValue });
+            }
+            else
+            {
+                control.GetType().InvokeMember(propName, 
+                    System.Reflection.BindingFlags.SetProperty, 
+                    null, 
+                    control, 
+                    new object[] { propValue });
+            }
+        }
 
 
         #region data manipulation methods

@@ -59,11 +59,11 @@
     <Compile Include="KeyPad.designer.cs">
       <DependentUpon>KeyPad.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainForm.cs">
+    <Compile Include="TesterIFMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <Compile Include="TesterIFMain.Designer.cs">
+      <DependentUpon>TesterIFMain.cs</DependentUpon>
     </Compile>
     <Compile Include="NumberPad.cs">
       <SubType>Form</SubType>
@@ -81,8 +81,8 @@
     <EmbeddedResource Include="KeyPad.resx">
       <DependentUpon>KeyPad.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
+    <EmbeddedResource Include="TesterIFMain.resx">
+      <DependentUpon>TesterIFMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NumberPad.resx">
       <DependentUpon>NumberPad.cs</DependentUpon>
