@@ -10,14 +10,15 @@ namespace XFTesterIF.TesterIFConnection
     public static class NIGpibHelper
     {
         
-        public static void GpibWrite(MessageBasedSession mbSession, string TxStr)
+        public static bool GpibWrite(MessageBasedSession mbSession, string TxStr)
         {
             try
             {
                 string textToWrite = ReplaceCommonEscapeSequences(TxStr);
                 mbSession.RawIO.Write(TxStr);
+                return true;
             }
-            catch (Exception) { }
+            catch (Exception) { return false; }
         }
 
         public static string GpibRead(MessageBasedSession mbSession)
@@ -33,14 +34,16 @@ namespace XFTesterIF.TesterIFConnection
             }
         }
 
-        private static string ReplaceCommonEscapeSequences(string s)
+        public static string ReplaceCommonEscapeSequences(string s)
         {
             return s.Replace("\\n", "\n").Replace("\\r", "\r");
         }
 
-        private static string InsertCommonEscapeSequences(string s)
+        public static string InsertCommonEscapeSequences(string s)
         {
             return s.Replace("\n", "\\n").Replace("\r", "\\r");
         }
+
+        
     }
 }
