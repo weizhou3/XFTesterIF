@@ -61,7 +61,7 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r");
+                NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //0110 0000
                 //GpibWrite("rsv \\x60\r"); //set SRQ bit 5,6
                 NIGpibHelper.GpibWrite(mbSession, "rd #30\r");//TODO-- during debugging need to verify is sending RD request once is enough
 
@@ -89,14 +89,13 @@ namespace XFTesterIF.TesterIFConnection
                     #region
                     //debug
                     List<string> debugMsg = new List<string>();
-                    debugMsg.Add("reading SITES?");
+                    debugMsg.Add("DUT ready, Waiting for Tester to issue SITE request..");
                     debugMsg.Add(retString);
                     report.DebugMsg = true;
                     report.DebugMsgs.Clear();
                     report.DebugMsgs.AddRange(debugMsg);
                     progress.Report(report);
                     #endregion
-
 
                     if (retString != null && retString.Contains("SITES?"))
                     {
@@ -110,7 +109,8 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                string highestDUT = getMaxDUT(SOT);
+                //string highestDUT = getMaxDUT(SOT, DUT_CS);
+                List<string> activeDUTs = MTGpibProcessor.getActiveDUT(SOT, DUT_CS);
                 string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                 Thread.Sleep(10);
@@ -135,20 +135,27 @@ namespace XFTesterIF.TesterIFConnection
                         break;
                     }
 
-                    else if (BINStr != null && BINStr.Contains(highestDUT))
+                    else if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
                     {
                         break;
                     }
                     //retString = NIGpibHelper.GpibRead(mbSession);--2019.5.23
                     //if (retString!=null)--2019.5.23
-                    else if (BINStr == null || !BINStr.Contains(highestDUT))
+                    else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
                     {
-                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//--2019.5.23
-                        Thread.Sleep(30);//--2019.5.23
-                        retString = NIGpibHelper.GpibRead(mbSession);//--2019.5.23
+                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
+                        Thread.Sleep(30);
+                        retString = NIGpibHelper.GpibRead(mbSession);
 
                         #region
                         //debug
+                        List<string> debugMsg = new List<string>();
+                        debugMsg.Add("SOT sent to Tester, Testing in progress..");
+                        debugMsg.Add(retString);
+                        report.DebugMsg = true;
+                        report.DebugMsgs.Clear();
+                        report.DebugMsgs.AddRange(debugMsg);
+                        progress.Report(report);
 
                         #endregion
 
@@ -369,7 +376,7 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                string highestDUT = getMaxDUT(SOT);
+                string highestDUT = getMaxDUT(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//read BIN from GPIB
 
                 report.PercentageCompleted = 5 / totalSteps * 100;
@@ -442,14 +449,14 @@ namespace XFTesterIF.TesterIFConnection
         /// </summary>
         /// <param name="SOT">SOT array</param>
         /// <returns>Highest DUT string</returns>
-        private string getMaxDUT(int[] SOT)
+        private string getMaxDUT(int[] SOT, int[] DUT_CS)
         {
             string S = "";
             int[] CS = new int[4];
-            int[] DUT_CS = new int[4];
+            //int[] DUT_CS = new int[4];
             for (int i = 0; i < 4; i++)
             {
-                DUT_CS[i] = int.Parse(MappingCS_DUT.Substring(i, 1));
+                //DUT_CS[i] = int.Parse(MappingCS_DUT.Substring(i, 1));
                 CS[i] = DUT_CS[i] * SOT[i];
             }
 
@@ -611,7 +618,7 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                string highestDUT = getMaxDUT(SOT);
+                string highestDUT = getMaxDUT(SOT, DUT_CS);
                 string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt 3\n" + "MEAS?" + "\r");//send measure request to DM
                 while (true)

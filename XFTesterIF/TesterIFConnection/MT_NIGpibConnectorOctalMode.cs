@@ -61,7 +61,7 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r");
+                NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //0110 0000
                 //GpibWrite("rsv \\x60\r"); //set SRQ bit 5,6
                 NIGpibHelper.GpibWrite(mbSession, "rd #30\r");//TODO-- during debugging need to verify is sending RD request once is enough
 
@@ -97,7 +97,6 @@ namespace XFTesterIF.TesterIFConnection
                     progress.Report(report);
 #endregion
 
-
                     if (retString!=null && retString.Contains("SITES?"))
                     {
                         break;
@@ -110,7 +109,8 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                string highestDUT = getMaxDUT(SOT, DUT_CS);
+                //string highestDUT = getMaxDUT(SOT, DUT_CS);
+                List<string> activeDUTs = MTGpibProcessor.getActiveDUT(SOT, DUT_CS);
                 string SOTStr = MTGpibProcessor.GetSOTStr(SOT,DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                 Thread.Sleep(10);
@@ -135,17 +135,17 @@ namespace XFTesterIF.TesterIFConnection
                         break;
                     }
 
-                    else if (BINStr != null && BINStr.Contains(highestDUT))
+                    else if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs,BINStr))
                     {
                         break;
                     }
                     //retString = NIGpibHelper.GpibRead(mbSession);--2019.5.23
                     //if (retString!=null)--2019.5.23
-                    else if (BINStr == null || !BINStr.Contains(highestDUT))
+                    else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
                     {
-                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//--2019.5.23
-                        Thread.Sleep(30);//--2019.5.23
-                        retString = NIGpibHelper.GpibRead(mbSession);//--2019.5.23
+                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
+                        Thread.Sleep(30);
+                        retString = NIGpibHelper.GpibRead(mbSession);
 
 #region
                         //debug
@@ -158,7 +158,7 @@ namespace XFTesterIF.TesterIFConnection
                         progress.Report(report);
 
 #endregion
-
+                        
                         if (retString.Contains("A BIN") || retString.Contains("B BIN") || retString.Contains("C BIN") || retString.Contains("D BIN")
                          || retString.Contains("E BIN") || retString.Contains("F BIN") || retString.Contains("G BIN") || retString.Contains("H BIN"))
                         {

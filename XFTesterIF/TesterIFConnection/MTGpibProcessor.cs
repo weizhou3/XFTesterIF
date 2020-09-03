@@ -49,6 +49,27 @@ namespace XFTesterIF.TesterIFConnection
             return SotStr;
         }
 
+        public static bool CheckBinComplete(List<string> ActiveDUTs, string BinStr)
+        {
+            int count = 0;
+
+            foreach (var dut in ActiveDUTs)
+            {
+                if (BinStr.Contains(dut))
+                {
+                    count++;
+                }
+            }
+
+            if (count == ActiveDUTs.Count)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         public static List<string> getActiveDUT(int[] SOT, int[] DUT_CS)
         {
             List<string> S = new List<string>();
