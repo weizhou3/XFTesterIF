@@ -1,4 +1,4 @@
-﻿using NationalInstruments.Visa;
+using NationalInstruments.Visa;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -34,7 +34,7 @@ namespace XFTesterIF.PLCConnection
         /// <param name="ct">Cancellation Token</param>
         /// <param name="progress">Progress Report Model</param>
         /// <returns>Comm Data Model with SOT information</returns>
-        public async Task<int[]> GetSOTAsync(CancellationToken ct, 
+        public async Task<int[]> GetSOTAsync(CancellationToken ct,
             IProgress<ProgressReportModel> progress, MessageBasedSession mbSession)
         {
             PlcTestingCommDataModel CommData = new PlcTestingCommDataModel();
@@ -46,18 +46,18 @@ namespace XFTesterIF.PLCConnection
             bool SOTready = false;
 
             DateTimeOffset idleStartTime = DateTimeOffset.Now;
-            
+
             //report.ErrMsg = "start time: "+testStartTime.ToString();
             //progress.Report(report);
             //int timeLeft = timeout - (int)elapsedTime.TotalMilliseconds;
 
             //initializeGpib(mbSession);
 
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
                 while (true)
                 {
-                    
+
                     if (ct.IsCancellationRequested)
                     {
                         canceled = true;
@@ -89,7 +89,7 @@ namespace XFTesterIF.PLCConnection
 
                     string plcRxStr = OmronFINsProcessor.GenericRdPLC(PlcMemArea.WR, "379", "383", PlcPort);
                     CommData = OmronFINsProcessor.ParseSOT(plcRxStr);//Extract SOT
-                    if (plcRxStr!=null)
+                    if (plcRxStr != null)
                     {
                         switch (getSOTstage(CommData))
                         {
@@ -226,7 +226,7 @@ namespace XFTesterIF.PLCConnection
         /// <param name="TestResult">Test Result in CommData Model</param>
         /// <returns>Send successful or not</returns>
         public bool SendResult(GpibCommDataModel TestResult)
-        {   
+        {
             string BinStr = "";
             for (int i = 0; i < 4; i++)
             {
@@ -262,7 +262,7 @@ namespace XFTesterIF.PLCConnection
         /// <returns></returns>
         private int getSOTstage(PlcTestingCommDataModel SOT)
         {
-            if (SOT==null)
+            if (SOT == null)
             {
                 return 0;
             }
