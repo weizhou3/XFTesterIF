@@ -15,12 +15,15 @@ namespace XFTesterIF.Models
         public int[] CS { get; set; } = new int[4] { 0, 0, 0, 0 };
         public int[] BIN { get; set; } = new int[4] { 0, 0, 0, 0 };
         public bool CriticalErr { get; set; } = false;
+        public bool DebugMsg { get; set; } = false;
+        public List<string> DebugMsgs { get; set; } =  new List<string>();
 
         public void ClrReport()
         {
             PercentageCompleted = 0;
             StageMsg = "";
             ErrMsg = "";
+            DebugMsgs.Clear();
             CriticalErr = false;
             for (int i = 0; i < 4; i++)
             {

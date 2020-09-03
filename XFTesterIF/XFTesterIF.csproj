@@ -66,8 +66,9 @@
     <Compile Include="PLCConnection\OmronFINsTestingConnector.cs" />
     <Compile Include="TesterIFConnection\ITesterIFConnection.cs" />
     <Compile Include="TesterIFConnection\MTGpibProcessor.cs" />
+    <Compile Include="TesterIFConnection\MT_NIGpibConnnectorQuadMode.cs" />
     <Compile Include="TesterIFConnection\RS_NIGpibConnector.cs" />
-    <Compile Include="TesterIFConnection\MT_NIGpibConnector.cs" />
+    <Compile Include="TesterIFConnection\MT_NIGpibConnectorOctalMode.cs" />
     <Compile Include="TesterIFConnection\NIGpibHelper.cs" />
     <Compile Include="TesterIFConnection\RS232Connector.cs" />
     <Compile Include="TesterIFConnection\RSGpibProcessor.cs" />

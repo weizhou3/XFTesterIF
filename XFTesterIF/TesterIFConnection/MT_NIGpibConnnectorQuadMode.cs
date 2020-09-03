@@ -12,7 +12,7 @@ using XFTesterIF.TesterIFConnection;
 
 namespace XFTesterIF.TesterIFConnection
 {
-    public class MT_NIGpibConnector : ITesterIFConnection
+    public class MT_NIGpibConnectorQuadMode : ITesterIFConnection
     {
         //CancellationTokenSource cts = new CancellationTokenSource();
         //public event Action<Progress<ProgressReportModel>> ProgressChanged;
@@ -25,7 +25,7 @@ namespace XFTesterIF.TesterIFConnection
         public string ResourceName { get; private set; }
         public int CommTimeout_ms { get; private set; }
 
-        public MT_NIGpibConnector(SerialPort serialPort, string ResourceName, string mappingCSDUT, int commTimeout_ms)
+        public MT_NIGpibConnectorQuadMode(SerialPort serialPort, string ResourceName, string mappingCSDUT, int commTimeout_ms)
         {
             //Initialize mbSession for NI GPIB
             GpibPort = serialPort;
@@ -33,11 +33,11 @@ namespace XFTesterIF.TesterIFConnection
             MappingCS_DUT = mappingCSDUT;
             CommTimeout_ms = commTimeout_ms;
         }
-        public MT_NIGpibConnector()
+        public MT_NIGpibConnectorQuadMode()
         {
 
         }
-        
+
         /// <summary>
         /// Get the Test Result from Tester
         /// </summary>
@@ -46,8 +46,8 @@ namespace XFTesterIF.TesterIFConnection
         /// <param name="ct">Cancellation Token</param>
         /// <param name="progress">Progress Report</param>
         /// <returns>Test Result in Commd Data Model</returns>
-        public async Task<GpibCommDataModel> GetTestResultAsync(MessageBasedSession mbSession, int[]SOT, 
-            int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
+        public async Task<GpibCommDataModel> GetTestResultAsync(MessageBasedSession mbSession, int[] SOT,
+            int[] DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
         {
             DateTimeOffset startTime = DateTimeOffset.Now;
             GpibCommDataModel retResult = new GpibCommDataModel();
@@ -73,19 +73,32 @@ namespace XFTesterIF.TesterIFConnection
 
                 while (true)
                 {
-                    if (ct.IsCancellationRequested||canceled)
+                    if (ct.IsCancellationRequested || canceled)
                     {
                         canceled = true;
                         break;
                     }
-                    if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms||timedOut)
+                    if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
                     {
                         timedOut = true;
                         break;
                     }
 
                     retString = NIGpibHelper.GpibRead(mbSession);
-                    if (retString!=null && retString.Contains("SITES?"))
+
+                    #region
+                    //debug
+                    List<string> debugMsg = new List<string>();
+                    debugMsg.Add("reading SITES?");
+                    debugMsg.Add(retString);
+                    report.DebugMsg = true;
+                    report.DebugMsgs.Clear();
+                    report.DebugMsgs.AddRange(debugMsg);
+                    progress.Report(report);
+                    #endregion
+
+
+                    if (retString != null && retString.Contains("SITES?"))
                     {
                         break;
                     }
@@ -98,7 +111,7 @@ namespace XFTesterIF.TesterIFConnection
             {
                 string retString = null;
                 string highestDUT = getMaxDUT(SOT);
-                string SOTStr = MTGpibProcessor.GetSOTStr(SOT,DUT_CS);
+                string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                 Thread.Sleep(10);
                 //NIGpibHelper.GpibWrite(mbSession, "rd #50\r"); --2019.5.23
@@ -111,12 +124,12 @@ namespace XFTesterIF.TesterIFConnection
 
                 while (true)//implementing original gpibstage 14
                 {
-                    if (ct.IsCancellationRequested||canceled)
+                    if (ct.IsCancellationRequested || canceled)
                     {
                         canceled = true;
                         break;
                     }
-                    else if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms||timedOut)
+                    else if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
                     {
                         timedOut = true;
                         break;
@@ -134,6 +147,11 @@ namespace XFTesterIF.TesterIFConnection
                         Thread.Sleep(30);//--2019.5.23
                         retString = NIGpibHelper.GpibRead(mbSession);//--2019.5.23
 
+                        #region
+                        //debug
+
+                        #endregion
+
                         if (retString.Contains("A BIN") || retString.Contains("B BIN") || retString.Contains("C BIN") || retString.Contains("D BIN")
                          || retString.Contains("E BIN") || retString.Contains("F BIN") || retString.Contains("G BIN") || retString.Contains("H BIN"))
                         {
@@ -144,7 +162,7 @@ namespace XFTesterIF.TesterIFConnection
                             //}--2019.5.23
                         }
                     }
-                    
+
                 }
             });
 
@@ -166,7 +184,7 @@ namespace XFTesterIF.TesterIFConnection
                 return null;
             }
             else
-            {   
+            {
                 retResult = MTGpibProcessor.GpibDecipher(BINStr, DUT_CS);
                 BINStr = null;
 
@@ -190,7 +208,7 @@ namespace XFTesterIF.TesterIFConnection
         /// <param name="ct">Cancellation Token</param>
         /// <param name="progress">Progress Report</param>
         /// <returns>Test Result in Comm data model</returns>
-        public async Task<GpibCommDataModel> GetTestResultAsync_CompleteVer(MessageBasedSession mbSession, int[] SOT, int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
+        public async Task<GpibCommDataModel> GetTestResultAsync_CompleteVer(MessageBasedSession mbSession, int[] SOT, int[] DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
         {
             //using (var rmSession = new ResourceManager())
             //{
@@ -250,7 +268,7 @@ namespace XFTesterIF.TesterIFConnection
             });
 
             //Task2. Send DUT ready and wait to be addressed as listener
-            await Task.Run(() => 
+            await Task.Run(() =>
             {
                 string RStr = null;
                 int bitAnd = 0;
@@ -312,13 +330,13 @@ namespace XFTesterIF.TesterIFConnection
                 }
             });
 
-            
+
             //Task4: Send SOT string and wait for to be addressed as lisenter
             await Task.Run(() =>
             {
                 string RStr = null;
                 int bitAnd = 0;
-                string SOTStr = MTGpibProcessor.GetSOTStr(SOT,DUT_CS);
+                string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                 NIGpibHelper.GpibWrite(mbSession, "wait 4\r");//req LACS
 
@@ -467,13 +485,13 @@ namespace XFTesterIF.TesterIFConnection
             }
             return S;
         }
-        
+
         /// <summary>
         /// Return the Spbyte with SRQ set to 1
         /// </summary>
         /// <param name="SOT">SOT array</param>
         /// <returns>Spbyte</returns>
-        public string SetSRQ(int[]SOT)
+        public string SetSRQ(int[] SOT)
         {
             string spbyte;
             int[] Spbyte = new int[8];
@@ -491,7 +509,7 @@ namespace XFTesterIF.TesterIFConnection
             return spbyte;
 
         }
-               
+
         public void SetCommTimeout(int timeOutms)
         {
             CommTimeout_ms = timeOutms;
@@ -524,7 +542,7 @@ namespace XFTesterIF.TesterIFConnection
         /// <param name="ct"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        public async Task<GpibCommDataModel> SimulatingGetTestResultAsync(MessageBasedSession mbSession, int[] SOT, int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
+        public async Task<GpibCommDataModel> SimulatingGetTestResultAsync(MessageBasedSession mbSession, int[] SOT, int[] DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
         {
             //if (!GpibPort.IsOpen)
             //{
@@ -558,7 +576,7 @@ namespace XFTesterIF.TesterIFConnection
             {
                 string retString = null;
                 NIGpibHelper.GpibWrite(mbSession, "wrt 3\n" + "CONFIGURE:VOLTAGE:AC 3.3,0.0001\r"); //send config to Digital Multimeter
-                
+
 
                 report.PercentageCompleted = 1 / totalSteps * 100;
                 report.StageMsg = "DUT ready, Waiting for Tester to issue SITE request..";
@@ -594,7 +612,7 @@ namespace XFTesterIF.TesterIFConnection
             {
                 string retString = null;
                 string highestDUT = getMaxDUT(SOT);
-                string SOTStr = MTGpibProcessor.GetSOTStr(SOT,DUT_CS);
+                string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt 3\n" + "MEAS?" + "\r");//send measure request to DM
                 while (true)
                 {
@@ -611,7 +629,7 @@ namespace XFTesterIF.TesterIFConnection
                     if (int.TryParse(tempStr, out int stat))
                     {
                         int ATN = stat & 16;
-                        if (ATN==16)
+                        if (ATN == 16)
                         {
                             NIGpibHelper.GpibWrite(mbSession, "wrt 3\n" + "MEAS?" + "\r");
                             break;
@@ -620,12 +638,12 @@ namespace XFTesterIF.TesterIFConnection
                         {
                             break;
                         }
-                    } 
+                    }
                 }
                 Thread.Sleep(10);
                 NIGpibHelper.GpibWrite(mbSession, "rd #50 3\r");
                 report.PercentageCompleted = 2 / totalSteps * 100;
-                report.StageMsg = "msg from the instrument: "+ NIGpibHelper.GpibRead(mbSession);
+                report.StageMsg = "msg from the instrument: " + NIGpibHelper.GpibRead(mbSession);
                 report.CS = SOT;
                 progress.Report(report);
 
@@ -657,14 +675,14 @@ namespace XFTesterIF.TesterIFConnection
                     {
                         retString = retString.Replace("\\n", "");
                     }
-                    if (retString != null && int.TryParse(retString,out int result))
+                    if (retString != null && int.TryParse(retString, out int result))
                     {
-                        if (result!=0)
+                        if (result != 0)
                         {
                             BINStr += result.ToString();
                         }
-                        
-                            
+
+
                     }
                 }
             });
@@ -684,9 +702,9 @@ namespace XFTesterIF.TesterIFConnection
             else
             {
                 retResult.BIN = SOT;
-                
+
                 report.PercentageCompleted = 3 / totalSteps * 100;
-                report.StageMsg = "BIN result obtained: "+BINStr;
+                report.StageMsg = "BIN result obtained: " + BINStr;
                 report.CS = SOT;
                 report.BIN = retResult.BIN;
                 progress.Report(report);

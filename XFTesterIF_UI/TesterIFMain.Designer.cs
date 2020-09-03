@@ -37,7 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.LabelOFF = new System.Windows.Forms.Label();
             this.LabelON = new System.Windows.Forms.Label();
-            this.MTCB = new System.Windows.Forms.CheckBox();
+            this.MT8CB = new System.Windows.Forms.CheckBox();
             this.DeltaCB = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblTiP = new System.Windows.Forms.Label();
@@ -81,10 +81,11 @@
             this.label35 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.TBoxCS3 = new System.Windows.Forms.TextBox();
-            this.label25 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.TBoxCS3 = new System.Windows.Forms.TextBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.MT4CB = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
@@ -134,7 +135,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(449, 27);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(124, 37);
+            this.label1.Size = new System.Drawing.Size(93, 29);
             this.label1.TabIndex = 2;
             this.label1.Text = "GPIB is";
             // 
@@ -145,7 +146,7 @@
             this.LabelOFF.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LabelOFF.Location = new System.Drawing.Point(575, 19);
             this.LabelOFF.Name = "LabelOFF";
-            this.LabelOFF.Size = new System.Drawing.Size(220, 55);
+            this.LabelOFF.Size = new System.Drawing.Size(169, 40);
             this.LabelOFF.TabIndex = 76;
             this.LabelOFF.Text = "    OFF   ";
             // 
@@ -156,28 +157,28 @@
             this.LabelON.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.LabelON.Location = new System.Drawing.Point(575, 19);
             this.LabelON.Name = "LabelON";
-            this.LabelON.Size = new System.Drawing.Size(210, 55);
+            this.LabelON.Size = new System.Drawing.Size(161, 40);
             this.LabelON.TabIndex = 77;
             this.LabelON.Text = "    ON    ";
             this.LabelON.Visible = false;
             // 
-            // MTCB
+            // MT8CB
             // 
-            this.MTCB.Appearance = System.Windows.Forms.Appearance.Button;
-            this.MTCB.BackColor = System.Drawing.Color.Gold;
-            this.MTCB.Checked = true;
-            this.MTCB.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.MTCB.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
-            this.MTCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MTCB.Location = new System.Drawing.Point(531, 575);
-            this.MTCB.Name = "MTCB";
-            this.MTCB.Size = new System.Drawing.Size(208, 96);
-            this.MTCB.TabIndex = 81;
-            this.MTCB.Text = "XuFeng\r\n(MT)";
-            this.MTCB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.MTCB.UseVisualStyleBackColor = false;
-            this.MTCB.CheckedChanged += new System.EventHandler(this.MTCB_CheckedChanged);
-            this.MTCB.Click += new System.EventHandler(this.MTCB_CheckedChanged);
+            this.MT8CB.Appearance = System.Windows.Forms.Appearance.Button;
+            this.MT8CB.BackColor = System.Drawing.Color.Gold;
+            this.MT8CB.Checked = true;
+            this.MT8CB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.MT8CB.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
+            this.MT8CB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MT8CB.Location = new System.Drawing.Point(531, 575);
+            this.MT8CB.Name = "MT8CB";
+            this.MT8CB.Size = new System.Drawing.Size(107, 89);
+            this.MT8CB.TabIndex = 81;
+            this.MT8CB.Text = "XuFeng\r\n(MT8)";
+            this.MT8CB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.MT8CB.UseVisualStyleBackColor = false;
+            this.MT8CB.CheckedChanged += new System.EventHandler(this.MTCB_CheckedChanged);
+            this.MT8CB.Click += new System.EventHandler(this.MTCB_CheckedChanged);
             // 
             // DeltaCB
             // 
@@ -185,9 +186,9 @@
             this.DeltaCB.BackColor = System.Drawing.Color.LightGray;
             this.DeltaCB.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
             this.DeltaCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DeltaCB.Location = new System.Drawing.Point(745, 575);
+            this.DeltaCB.Location = new System.Drawing.Point(789, 575);
             this.DeltaCB.Name = "DeltaCB";
-            this.DeltaCB.Size = new System.Drawing.Size(179, 96);
+            this.DeltaCB.Size = new System.Drawing.Size(107, 89);
             this.DeltaCB.TabIndex = 80;
             this.DeltaCB.Text = "XuFeng\r\n(RS)";
             this.DeltaCB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -224,7 +225,7 @@
             this.lblTiP.ForeColor = System.Drawing.Color.Blue;
             this.lblTiP.Location = new System.Drawing.Point(86, 33);
             this.lblTiP.Name = "lblTiP";
-            this.lblTiP.Size = new System.Drawing.Size(309, 37);
+            this.lblTiP.Size = new System.Drawing.Size(240, 29);
             this.lblTiP.TabIndex = 130;
             this.lblTiP.Text = "Testing in progress";
             this.lblTiP.Visible = false;
@@ -346,7 +347,7 @@
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(529, 531);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(197, 37);
+            this.label16.Size = new System.Drawing.Size(146, 29);
             this.label16.TabIndex = 92;
             this.label16.Text = "GPIB IF Port";
             // 
@@ -355,7 +356,7 @@
             this.TBoxGpibCardAddr.Enabled = false;
             this.TBoxGpibCardAddr.Location = new System.Drawing.Point(806, 528);
             this.TBoxGpibCardAddr.Name = "TBoxGpibCardAddr";
-            this.TBoxGpibCardAddr.Size = new System.Drawing.Size(56, 44);
+            this.TBoxGpibCardAddr.Size = new System.Drawing.Size(56, 35);
             this.TBoxGpibCardAddr.TabIndex = 91;
             this.TBoxGpibCardAddr.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TBoxGpibCardAddr.Click += new System.EventHandler(this.TextBoxClick);
@@ -366,7 +367,7 @@
             this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label28.Location = new System.Drawing.Point(867, 477);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(37, 42);
+            this.label28.Size = new System.Drawing.Size(29, 32);
             this.label28.TabIndex = 89;
             this.label28.Text = "s";
             // 
@@ -375,7 +376,7 @@
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(529, 485);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(226, 37);
+            this.label27.Size = new System.Drawing.Size(169, 29);
             this.label27.TabIndex = 88;
             this.label27.Text = "Comm timeout";
             // 
@@ -383,7 +384,7 @@
             // 
             this.TBoxTimeOut.Location = new System.Drawing.Point(806, 478);
             this.TBoxTimeOut.Name = "TBoxTimeOut";
-            this.TBoxTimeOut.Size = new System.Drawing.Size(56, 44);
+            this.TBoxTimeOut.Size = new System.Drawing.Size(56, 35);
             this.TBoxTimeOut.TabIndex = 87;
             this.TBoxTimeOut.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TBoxTimeOut.Click += new System.EventHandler(this.TextBoxClick);
@@ -393,7 +394,7 @@
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(529, 429);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(256, 37);
+            this.label26.Size = new System.Drawing.Size(193, 29);
             this.label26.TabIndex = 86;
             this.label26.Text = "Handler Address";
             // 
@@ -402,7 +403,7 @@
             this.TBoxAddress.Enabled = false;
             this.TBoxAddress.Location = new System.Drawing.Point(806, 429);
             this.TBoxAddress.Name = "TBoxAddress";
-            this.TBoxAddress.Size = new System.Drawing.Size(56, 44);
+            this.TBoxAddress.Size = new System.Drawing.Size(56, 35);
             this.TBoxAddress.TabIndex = 85;
             this.TBoxAddress.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TBoxAddress.Click += new System.EventHandler(this.TextBoxClick);
@@ -431,7 +432,7 @@
             this.label30.AutoSize = true;
             this.label30.Location = new System.Drawing.Point(35, 406);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(259, 37);
+            this.label30.Size = new System.Drawing.Size(197, 29);
             this.label30.TabIndex = 122;
             this.label30.Text = "System Message";
             // 
@@ -439,7 +440,7 @@
             // 
             this.tBoxSOT1.Location = new System.Drawing.Point(375, 195);
             this.tBoxSOT1.Name = "tBoxSOT1";
-            this.tBoxSOT1.Size = new System.Drawing.Size(56, 44);
+            this.tBoxSOT1.Size = new System.Drawing.Size(56, 35);
             this.tBoxSOT1.TabIndex = 125;
             this.tBoxSOT1.Text = "0";
             this.tBoxSOT1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -449,7 +450,7 @@
             // 
             this.tBoxSOT2.Location = new System.Drawing.Point(461, 195);
             this.tBoxSOT2.Name = "tBoxSOT2";
-            this.tBoxSOT2.Size = new System.Drawing.Size(56, 44);
+            this.tBoxSOT2.Size = new System.Drawing.Size(56, 35);
             this.tBoxSOT2.TabIndex = 126;
             this.tBoxSOT2.Text = "0";
             this.tBoxSOT2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -459,7 +460,7 @@
             // 
             this.tBoxSOT4.Location = new System.Drawing.Point(461, 138);
             this.tBoxSOT4.Name = "tBoxSOT4";
-            this.tBoxSOT4.Size = new System.Drawing.Size(56, 44);
+            this.tBoxSOT4.Size = new System.Drawing.Size(56, 35);
             this.tBoxSOT4.TabIndex = 127;
             this.tBoxSOT4.Text = "0";
             this.tBoxSOT4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -469,7 +470,7 @@
             // 
             this.tBoxSOT3.Location = new System.Drawing.Point(375, 138);
             this.tBoxSOT3.Name = "tBoxSOT3";
-            this.tBoxSOT3.Size = new System.Drawing.Size(56, 44);
+            this.tBoxSOT3.Size = new System.Drawing.Size(56, 35);
             this.tBoxSOT3.TabIndex = 128;
             this.tBoxSOT3.Text = "0";
             this.tBoxSOT3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -500,7 +501,7 @@
             this.TBoxCS1.Enabled = false;
             this.TBoxCS1.Location = new System.Drawing.Point(94, 160);
             this.TBoxCS1.Name = "TBoxCS1";
-            this.TBoxCS1.Size = new System.Drawing.Size(48, 41);
+            this.TBoxCS1.Size = new System.Drawing.Size(48, 32);
             this.TBoxCS1.TabIndex = 108;
             this.TBoxCS1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TBoxCS1.Click += new System.EventHandler(this.TextBoxClick);
@@ -512,7 +513,7 @@
             this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label37.Location = new System.Drawing.Point(23, 203);
             this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(90, 37);
+            this.label37.Size = new System.Drawing.Size(69, 29);
             this.label37.TabIndex = 109;
             this.label37.Text = "CS 1";
             // 
@@ -523,7 +524,7 @@
             this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label36.Location = new System.Drawing.Point(23, 161);
             this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(86, 37);
+            this.label36.Size = new System.Drawing.Size(66, 29);
             this.label36.TabIndex = 111;
             this.label36.Text = "DUT";
             // 
@@ -541,7 +542,7 @@
             this.TBoxCS4.Enabled = false;
             this.TBoxCS4.Location = new System.Drawing.Point(245, 62);
             this.TBoxCS4.Name = "TBoxCS4";
-            this.TBoxCS4.Size = new System.Drawing.Size(48, 41);
+            this.TBoxCS4.Size = new System.Drawing.Size(48, 32);
             this.TBoxCS4.TabIndex = 116;
             this.TBoxCS4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TBoxCS4.Click += new System.EventHandler(this.TextBoxClick);
@@ -553,7 +554,7 @@
             this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label31.Location = new System.Drawing.Point(170, 105);
             this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(92, 37);
+            this.label31.Size = new System.Drawing.Size(69, 29);
             this.label31.TabIndex = 117;
             this.label31.Text = "CS 4";
             // 
@@ -564,7 +565,7 @@
             this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label29.Location = new System.Drawing.Point(171, 62);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(86, 37);
+            this.label29.Size = new System.Drawing.Size(66, 29);
             this.label29.TabIndex = 119;
             this.label29.Text = "DUT";
             // 
@@ -582,7 +583,7 @@
             this.TBoxCS2.Enabled = false;
             this.TBoxCS2.Location = new System.Drawing.Point(245, 161);
             this.TBoxCS2.Name = "TBoxCS2";
-            this.TBoxCS2.Size = new System.Drawing.Size(48, 41);
+            this.TBoxCS2.Size = new System.Drawing.Size(48, 32);
             this.TBoxCS2.TabIndex = 120;
             this.TBoxCS2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TBoxCS2.Click += new System.EventHandler(this.TextBoxClick);
@@ -594,7 +595,7 @@
             this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label35.Location = new System.Drawing.Point(171, 203);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(92, 37);
+            this.label35.Size = new System.Drawing.Size(69, 29);
             this.label35.TabIndex = 121;
             this.label35.Text = "CS 2";
             // 
@@ -605,7 +606,7 @@
             this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label33.Location = new System.Drawing.Point(174, 161);
             this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(86, 37);
+            this.label33.Size = new System.Drawing.Size(66, 29);
             this.label33.TabIndex = 123;
             this.label33.Text = "DUT";
             // 
@@ -636,6 +637,37 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "DUT Mapping";
             // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.BackColor = System.Drawing.SystemColors.Info;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.Location = new System.Drawing.Point(23, 62);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(66, 29);
+            this.label22.TabIndex = 115;
+            this.label22.Text = "DUT";
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.BackColor = System.Drawing.SystemColors.Info;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.Location = new System.Drawing.Point(23, 105);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(69, 29);
+            this.label25.TabIndex = 113;
+            this.label25.Text = "CS 3";
+            // 
+            // TBoxCS3
+            // 
+            this.TBoxCS3.Enabled = false;
+            this.TBoxCS3.Location = new System.Drawing.Point(94, 61);
+            this.TBoxCS3.Name = "TBoxCS3";
+            this.TBoxCS3.Size = new System.Drawing.Size(48, 32);
+            this.TBoxCS3.TabIndex = 112;
+            this.TBoxCS3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.SystemColors.Info;
@@ -646,43 +678,28 @@
             this.pictureBox1.TabIndex = 114;
             this.pictureBox1.TabStop = false;
             // 
-            // TBoxCS3
+            // MT4CB
             // 
-            this.TBoxCS3.Enabled = false;
-            this.TBoxCS3.Location = new System.Drawing.Point(94, 61);
-            this.TBoxCS3.Name = "TBoxCS3";
-            this.TBoxCS3.Size = new System.Drawing.Size(48, 41);
-            this.TBoxCS3.TabIndex = 112;
-            this.TBoxCS3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.MT4CB.Appearance = System.Windows.Forms.Appearance.Button;
+            this.MT4CB.BackColor = System.Drawing.Color.LightGray;
+            this.MT4CB.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
+            this.MT4CB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MT4CB.Location = new System.Drawing.Point(661, 575);
+            this.MT4CB.Name = "MT4CB";
+            this.MT4CB.Size = new System.Drawing.Size(107, 89);
+            this.MT4CB.TabIndex = 130;
+            this.MT4CB.Text = "XuFeng\r\n(MT4)";
+            this.MT4CB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.MT4CB.UseVisualStyleBackColor = false;
+            this.MT4CB.CheckedChanged += new System.EventHandler(this.MT4CB_CheckedChanged);
             // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.BackColor = System.Drawing.SystemColors.Info;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(23, 105);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(92, 37);
-            this.label25.TabIndex = 113;
-            this.label25.Text = "CS 3";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.BackColor = System.Drawing.SystemColors.Info;
-            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(23, 62);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(86, 37);
-            this.label22.TabIndex = 115;
-            this.label22.Text = "DUT";
-            // 
-            // MainForm
+            // TesterIFMain
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(974, 729);
+            this.ClientSize = new System.Drawing.Size(978, 744);
+            this.Controls.Add(this.MT4CB);
             this.Controls.Add(this.tBoxSendSOT);
             this.Controls.Add(this.tBoxSOT3);
             this.Controls.Add(this.tBoxSOT4);
@@ -699,7 +716,7 @@
             this.Controls.Add(this.label26);
             this.Controls.Add(this.TBoxAddress);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.MTCB);
+            this.Controls.Add(this.MT8CB);
             this.Controls.Add(this.DeltaCB);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.LabelON);
@@ -712,7 +729,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.MinimumSize = new System.Drawing.Size(1000, 800);
-            this.Name = "MainForm";
+            this.Name = "TesterIFMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "GPIB";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -744,7 +761,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label LabelOFF;
         private System.Windows.Forms.Label LabelON;
-        private System.Windows.Forms.CheckBox MTCB;
+        private System.Windows.Forms.CheckBox MT8CB;
         private System.Windows.Forms.CheckBox DeltaCB;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label LabelBIN3;
@@ -792,6 +809,7 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox TBoxCS3;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.CheckBox MT4CB;
     }
 }
 

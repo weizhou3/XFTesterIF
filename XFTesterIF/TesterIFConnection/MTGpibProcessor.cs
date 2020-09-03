@@ -24,7 +24,7 @@ namespace XFTesterIF.TesterIFConnection
         {
             string StrX = "";
             string StrY = "";
-            string BinStr = "";
+            string SotStr = "";
             int[] X = new int[8] { 0, 0, 1, 1, 0, 0, 0, 0 };//bit 0..3 <-> DUT 1..4 the prefix is 3 ->0011
             int[] Y = new int[8] { 0, 0, 1, 1, 0, 0, 0, 0 };//bit 0..3 <-> DUT 5..8
 
@@ -45,11 +45,56 @@ namespace XFTesterIF.TesterIFConnection
             string[] arrayY = Array.ConvertAll(Y, element => element.ToString());
             StrX = string.Join("", arrayX);
             StrY = string.Join("", arrayY);
-            BinStr = GlobalIF.BinaryToASCII(StrX) + GlobalIF.BinaryToASCII(StrY);
-            return BinStr;
+            SotStr = GlobalIF.BinaryToASCII(StrX) + GlobalIF.BinaryToASCII(StrY);
+            return SotStr;
         }
 
-        
+        public static List<string> getActiveDUT(int[] SOT, int[] DUT_CS)
+        {
+            List<string> S = new List<string>();
+            //List<int> CS = new List<int>();
+            int[] CS = new int[4];
+            //int[] DUT_CS = new int[4];
+            for (int i = 0; i < 4; i++)
+            {
+                //DUT_CS[i] = int.Parse(MappingCS_DUT.Substring(i, 1));
+                CS[i] = DUT_CS[i] * SOT[i];
+                switch (CS[i])
+                {
+                    case 1:
+                        S.Add("A BIN");
+                        break;
+                    case 2:
+                        S.Add("B BIN");
+                        break;
+                    case 3:
+                        S.Add("C BIN");
+                        break;
+                    case 4:
+                        S.Add("D BIN");
+                        break;
+                    case 5:
+                        S.Add("E BIN");
+                        break;
+                    case 6:
+                        S.Add("F BIN");
+                        break;
+                    case 7:
+                        S.Add("G BIN");
+                        break;
+                    case 8:
+                        S.Add("H BIN");
+                        break;
+                }
+            }
+
+            //int MaxValue = CS.Max();
+            //int MaxIndex = MT.DUT_CS.ToList().IndexOf(MaxValue);
+
+            
+            return S;
+        }
+
 
         private static int[] BinAssign_MT(string RxS, int[] DUT_CS)//translate received BIN to BIN class. 
         {

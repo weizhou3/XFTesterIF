@@ -22,7 +22,8 @@ namespace XFTesterIF
 
     public enum TesterIFProtocol
     {
-        MTGPIB,
+        MTGPIB8,
+        MTGPIB4,
         RSGPIB,
         RSRS232,
         TTL

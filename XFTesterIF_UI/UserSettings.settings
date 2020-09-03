@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="TesterIFProtocol" Type="System.String" Scope="User">
-      <Value Profile="(Default)">MTGPIB</Value>
+      <Value Profile="(Default)">MTGPIB8</Value>
     </Setting>
     <Setting Name="TestHandlingMode" Type="System.String" Scope="User">
       <Value Profile="(Default)">Synchronous</Value>

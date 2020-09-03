@@ -8,6 +8,7 @@ using XFTesterIF.Models;
 using NationalInstruments.Visa;
 using System.IO.Ports;
 using XFTesterIF.TesterIFConnection;
+using System.IO;
 
 namespace XFTesterIF
 {
@@ -18,6 +19,8 @@ namespace XFTesterIF
         private string HandlerAddress { get; set; }
         private string GpibCardAddress { get; set; }
         private int[] DUT_CS { get; set; }
+        private bool resultValid { get; set; }
+
         //public SerialPort GpibPort { get; set; }
         public TestWorker(string portNumber, string CS_MTDUT, string handlerAddress)
         {
@@ -72,13 +75,42 @@ namespace XFTesterIF
                     //1.get SOT from PLC
                     int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession);
 
-                    //2.Send SOT to tester and wait for result
-                    GpibCommDataModel TestResult = await GlobalIF.TesterIF.GetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
-                    //GpibCommDataModel TestResult = await GlobalIF.TesterIF.SimulatingGetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
+                    if (SOT!=null)
+                    {
+                        //2.Send SOT to tester and wait for result
+                        GpibCommDataModel TestResult = await GlobalIF.TesterIF.GetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
+                        //GpibCommDataModel TestResult = await GlobalIF.TesterIF.SimulatingGetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
 
-                    //3. parse test result and send to PLC
-                    TestResult = parseTestResult(TestResult);
-                    GlobalIF.plcTestingConnection.SendResult(TestResult);
+                        #region
+                        //debug session
+                        List<string> debugMsgs = debugOutput(TestResult);
+                        report.ClrReport();
+                        report.DebugMsgs = debugMsgs;
+                        report.DebugMsg = true;
+                        progress.Report(report);
+
+                        //debug session end
+                        #endregion
+
+                        //3. verify result --TODO: add result verification
+                        resultValid = verifyResult(TestResult);
+
+                        if (resultValid)
+                        {
+                            //4. Parse test result and send result to PLC
+                            TestResult = parseTestResult(TestResult);
+                            GlobalIF.plcTestingConnection.SendResult(TestResult);
+                        }
+                        else
+                        {
+                            report.ClrReport();
+                            report.ErrMsg = "Invalid BIN data, please verify tester driver settings and restart GPIB";
+                            report.CriticalErr = true;
+                            progress.Report(report);
+                            break;
+                        }
+                    }                   
+
                 }
                 catch (NotImplementedException exp)
                 {
@@ -159,8 +191,23 @@ namespace XFTesterIF
    
             //GpibWrite("tmo 1\r");
             //GpibCommOK = GpibWrite("rsv \\x00\r");
+        }
 
+        private bool verifyResult(GpibCommDataModel result)
+        {
+            return false;
+        }
 
+        private List<string> debugOutput (GpibCommDataModel result)
+        {
+            List<string> lines = new List<string>();
+            lines.Add("BIN: " + string.Join(" ", result.BIN));
+            lines.Add("cmdType: " + result.cmdType);
+            lines.Add("EOT: " + string.Join(" ", result.EOT));
+            lines.Add("RxStr: " + result.RxStr);
+            //lines.Add(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+            return lines;
+            //File.AppendAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\DebugOutput", lines);
         }
     }
 }

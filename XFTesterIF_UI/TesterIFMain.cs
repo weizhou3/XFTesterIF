@@ -14,6 +14,7 @@ using XFTesterIF;
 using XFTesterIF.Models;
 using System.Threading;
 using XFTesterIF.PLCConnection;
+using System.IO;
 //using ResourceManager = NationalInstruments.Visa.ResourceManager;
 
 namespace XFTesterIF_UI
@@ -89,7 +90,14 @@ namespace XFTesterIF_UI
         {
             if (e.CriticalErr)
             {
+                e.CriticalErr = false;
                 btnGpibOFF.PerformClick();
+            }
+            else if (e.DebugMsg)
+            {
+                e.DebugMsgs.Add(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                File.AppendAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\DebugOutput", e.DebugMsgs);
+                e.DebugMsg = false;
             }
             else
             {
@@ -124,36 +132,12 @@ namespace XFTesterIF_UI
                         }
                     }
 
-                    //if (e.CS[0]>0)
-                    //{
-                    //    LabelBIN1.Text = "BIN " + e.BIN[0].ToString();
-                    //    LabelBIN1.Visible = true;
-                    //}
-                    //if (e.CS[1] > 0)
-                    //{
-                    //    LabelBIN2.Text = "BIN " + e.BIN[1].ToString();
-                    //    LabelBIN2.Visible = true;
-                    //}
-                    //if (e.CS[2] > 0)
-                    //{
-                    //    LabelBIN3.Text = "BIN " + e.BIN[2].ToString();
-                    //    LabelBIN3.Visible = true;
-                    //}
-                    //if (e.CS[3] > 0)
-                    //{
-                    //    LabelBIN4.Text = "BIN " + e.BIN[3].ToString();
-                    //    LabelBIN4.Visible = true;
-                    //}
-
                 }
                 if (e.ErrMsg.Length > 1)
                 {
                     ErrMsgBox.Text += e.ErrMsg + Environment.NewLine;
                 }
-                //if (e.StageMsg.Length>1)
-                //{
-                //    ErrMsgBox.Text += e.StageMsg + Environment.NewLine;
-                //} 
+
             }
             
         }
@@ -232,7 +216,9 @@ namespace XFTesterIF_UI
             {
                 case "NIGPIB":
                     if (UserSettings.Default.TesterIFProtocol == "MTGPIB")
-                        GlobalIF.InitializeIFConnections(TesterIFType.NIGPIB, TesterIFProtocol.MTGPIB);
+                        GlobalIF.InitializeIFConnections(TesterIFType.NIGPIB, TesterIFProtocol.MTGPIB8);
+                    if (UserSettings.Default.TesterIFProtocol == "MTGPIB4")
+                        GlobalIF.InitializeIFConnections(TesterIFType.NIGPIB, TesterIFProtocol.MTGPIB4);
                     if (UserSettings.Default.TesterIFProtocol == "RSGPIB")
                         GlobalIF.InitializeIFConnections(TesterIFType.NIGPIB, TesterIFProtocol.RSGPIB);
                     break;
@@ -259,7 +245,7 @@ namespace XFTesterIF_UI
             //UserSettings.Default.MTDUT_CS3 = TBoxCS3.Text;
             //UserSettings.Default.MTDUT_CS4 = TBoxCS4.Text;
             UserSettings.Default.CS_MTDUT = TBoxCS1.Text + TBoxCS2.Text + TBoxCS3.Text + TBoxCS4.Text;
-            if (MTCB.Checked)
+            if (MT8CB.Checked)
                 UserSettings.Default.TesterIFProtocol = "MTGPIB";
             if (DeltaCB.Checked)
                 UserSettings.Default.TesterIFProtocol = "RSGPIB";
@@ -275,7 +261,7 @@ namespace XFTesterIF_UI
             TBoxCS2.Text = UserSettings.Default.CS_MTDUT.Substring(1, 1);
             TBoxCS3.Text = UserSettings.Default.CS_MTDUT.Substring(2, 1);
             TBoxCS4.Text = UserSettings.Default.CS_MTDUT.Substring(3, 1);
-            MTCB.Checked = (UserSettings.Default.TesterIFProtocol == "MTGPIB");
+            MT8CB.Checked = (UserSettings.Default.TesterIFProtocol == "MTGPIB");
             DeltaCB.Checked = (UserSettings.Default.TesterIFProtocol == "RSGPIB");
             //updateMtDUT_CS();
         }
@@ -290,7 +276,7 @@ namespace XFTesterIF_UI
             TBoxCS3.Enabled = false;
             TBoxCS4.Enabled = false;
             DeltaCB.Enabled = false;
-            MTCB.Enabled = false;
+            MT8CB.Enabled = false;
         }
 
         private void enableSettingInput()
@@ -303,7 +289,7 @@ namespace XFTesterIF_UI
             TBoxCS3.Enabled = true;
             TBoxCS4.Enabled = true;
             DeltaCB.Enabled = true;
-            MTCB.Enabled = true;
+            MT8CB.Enabled = true;
         }
 
         private void MTCB_CheckedChanged(object sender, EventArgs e)
@@ -311,9 +297,30 @@ namespace XFTesterIF_UI
             CheckBox CB = (CheckBox)sender;
             if (CB.Checked)
             {
-                UserSettings.Default.TesterIFProtocol = "MTGPIB";
+                UserSettings.Default.TesterIFProtocol = "MTGPIB8";
                 CB.BackColor = Color.Gold;
                 DeltaCB.Checked = false;
+                MT4CB.Checked = false;
+                TBoxCS1.Visible = true;
+                TBoxCS2.Visible = true;
+                TBoxCS3.Visible = true;
+                TBoxCS4.Visible = true;
+            }
+            else
+            {
+                CB.BackColor = Color.LightGray;
+            }
+        }
+
+        private void MT4CB_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox CB = (CheckBox)sender;
+            if (CB.Checked)
+            {
+                UserSettings.Default.TesterIFProtocol = "MTGPIB4";
+                CB.BackColor = Color.Gold;
+                DeltaCB.Checked = false;
+                MT8CB.Checked = false;
                 TBoxCS1.Visible = true;
                 TBoxCS2.Visible = true;
                 TBoxCS3.Visible = true;
@@ -332,7 +339,8 @@ namespace XFTesterIF_UI
             {
                 UserSettings.Default.TesterIFProtocol = "RSGPIB";
                 CB.BackColor = Color.Gold;
-                MTCB.Checked = false;
+                MT8CB.Checked = false;
+                MT4CB.Checked = false;
                 TBoxCS1.Visible = false;
                 TBoxCS2.Visible = false;
                 TBoxCS3.Visible = false;
@@ -405,5 +413,7 @@ namespace XFTesterIF_UI
         {
             ErrMsgBox.Clear();
         }
+
+
     }
 }

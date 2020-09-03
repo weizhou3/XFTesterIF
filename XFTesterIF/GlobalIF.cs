@@ -25,15 +25,31 @@ namespace XFTesterIF
             switch (IFType)
             {
                 case TesterIFType.NIGPIB:
-                    MT_NIGpibConnector gpib = new MT_NIGpibConnector();
-                    TesterIF = gpib;
+                    switch (IFProtocol)
+                    {
+                        case TesterIFProtocol.MTGPIB8:
+                            MT_NIGpibConnectorOctalMode MTGPIB8 = new MT_NIGpibConnectorOctalMode();
+                            TesterIF = MTGPIB8;
+                            break;
+                        case TesterIFProtocol.MTGPIB4:
+                            MT_NIGpibConnectorQuadMode MTGPIB4 = new MT_NIGpibConnectorQuadMode();
+                            TesterIF = MTGPIB4;
+                            
+                            break;
+
+                        default:
+                            break;
+                            
+                    }
+                    
+                    
                     //gpib.IFport = IFport;
 
                     //switch (IFProtocol)
                     //{
                     //    case TesterIFProtocol.MTGPIB:
                     //         NIGpibConnector gpib
-                            
+
                     //        break;
                     //    case TesterIFProtocol.RSGPIB:
                     //        gpib.Protocol = "RSGPIB";
@@ -100,8 +116,10 @@ namespace XFTesterIF
         {
             switch (str)
             {
-                case "MTGPIB":
-                    return TesterIFProtocol.MTGPIB;
+                case "MTGPIB8":
+                    return TesterIFProtocol.MTGPIB8;
+                case "MTGPIB4":
+                    return TesterIFProtocol.MTGPIB4;
                 case "RSGPIB":
                     return TesterIFProtocol.RSGPIB;
                 case "RSRS232":
