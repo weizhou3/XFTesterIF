@@ -50,8 +50,8 @@ namespace XFTesterIF_UI
 
             //bool succ = startPlcPort(out string expmsg);
 
-            //if (startPlcPort(out string expmsg))// TODO -- uncomment for production
-            if(true)
+            if (startPlcPort(out string expmsg))
+            //if(true)// TODO -- comment for production
             {
                 int.TryParse(UserSettings.Default.CommTimeout, out int timeout);
                 cts = new CancellationTokenSource();

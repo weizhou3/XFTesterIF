@@ -96,8 +96,9 @@ namespace XFTesterIF.TesterIFConnection
                     report.DebugMsgs.AddRange(debugMsg);
                     progress.Report(report);
 #endregion
-
-                    if (retString!=null) //&& retString.Contains("SITES?"))//TODO-- uncommment for production
+                    
+                    //TODO-- uncommment for production
+                    if (retString!=null && retString.Contains("SITES?"))
                     {
                         break;
                     }
@@ -156,7 +157,7 @@ namespace XFTesterIF.TesterIFConnection
                         report.DebugMsgs.Clear();
                         report.DebugMsgs.AddRange(debugMsg);
                         progress.Report(report);
-                        BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
+                        //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
 
 #endregion
                         

@@ -73,8 +73,8 @@ namespace XFTesterIF
 
                     //await Task.Delay(500);
                     //1.get SOT from PLC
-                    //int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); //TODO --  uncomment for production
-                    int[] SOT = { 1, 1, 0, 1 };
+                    int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
+                    //int[] SOT = { 1, 1, 0, 1 };//TODO --  comment for production
 
                     if (SOT!=null)
                     {
