@@ -152,13 +152,23 @@ namespace XFTesterIF
 
 
         #region data manipulation methods
-        public static string HexConvert2(string str2)//convert binary string to hex string
+        /// <summary>
+        /// Convert binary string to hex string
+        /// </summary>
+        /// <param name="str2">binary string</param>
+        /// <returns>hex string</returns>
+        public static string HexConvert2(string str2)
         {
             string str16 = Convert.ToInt32(str2, 2).ToString("X");
             return str16;
         }
 
-        public static string HexConvert10(string str10)//convert decimal string to hex string
+        /// <summary>
+        /// Convert decimal string to hex string
+        /// </summary>
+        /// <param name="str10">decimal string</param>
+        /// <returns>hex string</returns>
+        public static string HexConvert10(string str10)
         {
             string str16 = Convert.ToInt32(str10, 10).ToString("X");
             return str16;

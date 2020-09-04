@@ -50,8 +50,8 @@ namespace XFTesterIF_UI
 
             //bool succ = startPlcPort(out string expmsg);
 
-            if (startPlcPort(out string expmsg))
-            //if(true)
+            //if (startPlcPort(out string expmsg))// TODO -- uncomment for production
+            if(true)
             {
                 int.TryParse(UserSettings.Default.CommTimeout, out int timeout);
                 cts = new CancellationTokenSource();
@@ -95,7 +95,7 @@ namespace XFTesterIF_UI
             }
             else if (e.DebugMsg)
             {
-                e.DebugMsgs.Add(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                e.DebugMsgs.Add(DateTime.Now.ToString("yyyy-MMdd-HH:mm:ss"));
                 File.AppendAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\DebugOutput", e.DebugMsgs);
                 e.DebugMsg = false;
             }
@@ -112,7 +112,7 @@ namespace XFTesterIF_UI
                     LabelBIN2.Visible = false;
                     LabelBIN3.Visible = false;
                     LabelBIN4.Visible = false;
-                    if (e.PercentageCompleted > 0)
+                    if (e.PercentageCompleted > 0 && !cts.IsCancellationRequested)
                     {
                         lblTiP.Visible = true;
                     }
@@ -215,7 +215,7 @@ namespace XFTesterIF_UI
             switch (UserSettings.Default.TesterIFType)
             {
                 case "NIGPIB":
-                    if (UserSettings.Default.TesterIFProtocol == "MTGPIB")
+                    if (UserSettings.Default.TesterIFProtocol == "MTGPIB8")
                         GlobalIF.InitializeIFConnections(TesterIFType.NIGPIB, TesterIFProtocol.MTGPIB8);
                     if (UserSettings.Default.TesterIFProtocol == "MTGPIB4")
                         GlobalIF.InitializeIFConnections(TesterIFType.NIGPIB, TesterIFProtocol.MTGPIB4);
@@ -246,7 +246,7 @@ namespace XFTesterIF_UI
             //UserSettings.Default.MTDUT_CS4 = TBoxCS4.Text;
             UserSettings.Default.CS_MTDUT = TBoxCS1.Text + TBoxCS2.Text + TBoxCS3.Text + TBoxCS4.Text;
             if (MT8CB.Checked)
-                UserSettings.Default.TesterIFProtocol = "MTGPIB";
+                UserSettings.Default.TesterIFProtocol = "MTGPIB8";
             if (DeltaCB.Checked)
                 UserSettings.Default.TesterIFProtocol = "RSGPIB";
 
@@ -261,7 +261,7 @@ namespace XFTesterIF_UI
             TBoxCS2.Text = UserSettings.Default.CS_MTDUT.Substring(1, 1);
             TBoxCS3.Text = UserSettings.Default.CS_MTDUT.Substring(2, 1);
             TBoxCS4.Text = UserSettings.Default.CS_MTDUT.Substring(3, 1);
-            MT8CB.Checked = (UserSettings.Default.TesterIFProtocol == "MTGPIB");
+            MT8CB.Checked = (UserSettings.Default.TesterIFProtocol == "MTGPIB8");
             DeltaCB.Checked = (UserSettings.Default.TesterIFProtocol == "RSGPIB");
             //updateMtDUT_CS();
         }
@@ -411,7 +411,5 @@ namespace XFTesterIF_UI
         {
             ErrMsgBox.Clear();
         }
-
-
     }
 }

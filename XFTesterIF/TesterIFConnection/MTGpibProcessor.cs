@@ -49,6 +49,12 @@ namespace XFTesterIF.TesterIFConnection
             return SotStr;
         }
 
+        /// <summary>
+        /// Check if all requested DUT have test result in BIN String 
+        /// </summary>
+        /// <param name="ActiveDUTs">The list of active DUT string, get from "GetActiveDUT"</param>
+        /// <param name="BinStr">BIN string received from tester</param>
+        /// <returns>All BIN strings are received True/False</returns>
         public static bool CheckBinComplete(List<string> ActiveDUTs, string BinStr)
         {
             int count = 0;
@@ -70,7 +76,14 @@ namespace XFTesterIF.TesterIFConnection
                 return false;
             }
         }
-        public static List<string> getActiveDUT(int[] SOT, int[] DUT_CS)
+
+        /// <summary>
+        /// Get the list of active DUT string
+        /// </summary>
+        /// <param name="SOT">SOT array</param>
+        /// <param name="DUT_CS">tester DUT and handerl CS mapping array</param>
+        /// <returns>List of active DUT string</returns>
+        public static List<string> GetActiveDUT(int[] SOT, int[] DUT_CS)
         {
             List<string> S = new List<string>();
             //List<int> CS = new List<int>();

@@ -73,7 +73,8 @@ namespace XFTesterIF
 
                     //await Task.Delay(500);
                     //1.get SOT from PLC
-                    int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession);
+                    //int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); //TODO --  uncomment for production
+                    int[] SOT = { 1, 1, 0, 1 };
 
                     if (SOT!=null)
                     {
@@ -99,7 +100,7 @@ namespace XFTesterIF
                         {
                             //4. Parse test result and send result to PLC
                             TestResult = parseTestResult(TestResult);
-                            GlobalIF.plcTestingConnection.SendResult(TestResult);
+                            //GlobalIF.plcTestingConnection.SendResult(TestResult);
                         }
                         else
                         {
@@ -195,7 +196,7 @@ namespace XFTesterIF
 
         private bool verifyResult(GpibCommDataModel result)
         {
-            return false;
+            return true;
         }
 
         private List<string> debugOutput (GpibCommDataModel result)

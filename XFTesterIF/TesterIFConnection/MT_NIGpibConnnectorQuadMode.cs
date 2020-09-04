@@ -57,7 +57,7 @@ namespace XFTesterIF.TesterIFConnection
             bool canceled = false;
             string BINStr = null;
 
-            //Task1: Issue DUT ready and Await Tester SITES?
+            //Task1: Send SOT to tester by interrupting SRQ line, then wait for BIN 
             await Task.Run(() =>
             {
                 string retString = null;
@@ -110,7 +110,7 @@ namespace XFTesterIF.TesterIFConnection
             {
                 string retString = null;
                 //string highestDUT = getMaxDUT(SOT, DUT_CS);
-                List<string> activeDUTs = MTGpibProcessor.getActiveDUT(SOT, DUT_CS);
+                List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
                 string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                 Thread.Sleep(10);
@@ -719,6 +719,40 @@ namespace XFTesterIF.TesterIFConnection
 
                 //mbSession.Dispose();
                 return retResult;
+            }
+        }
+
+        /// <summary>
+        /// Get the SOT str to be sent to tester 
+        /// </summary>
+        /// <param name="SOT">PLC SOT array</param>
+        /// <param name="DUT_CS">DUT CS mapping array</param>
+        /// <returns>SOT string to be sent to NI GPIB</returns>
+        private string GetSotSrq(int[] SOT, int[] DUT_CS)
+        {
+            if (DUT_CS.Max() <= 4)
+            {
+                string SotStr = "";
+                int[] spbyte = new int[8] { 1, 1, 0, 0, 0, 0, 0, 0 };//bit 0..3 <-> DUT 1..4, the prefix ->1100
+          
+
+                for (int i = 0; i < 4; i++)//loop SOT[]
+                {
+                    spbyte[8 - DUT_CS[i]] = SOT[i];
+
+                }
+                string[] arraySpbyte = Array.ConvertAll(spbyte, element => element.ToString());
+            
+                string StrSpbyte2 = string.Join("", arraySpbyte);
+
+                SotStr = GlobalIF.HexConvert2(StrSpbyte2);
+
+                SotStr = "rsv \\x" + SotStr + "\r";
+                return SotStr;
+            }
+            else
+            {
+                return null;
             }
         }
 

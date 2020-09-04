@@ -86,6 +86,7 @@
             this.TBoxCS3 = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.MT4CB = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
@@ -178,7 +179,6 @@
             this.MT8CB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.MT8CB.UseVisualStyleBackColor = false;
             this.MT8CB.CheckedChanged += new System.EventHandler(this.MTCB_CheckedChanged);
-            this.MT8CB.Click += new System.EventHandler(this.MTCB_CheckedChanged);
             // 
             // DeltaCB
             // 
@@ -186,7 +186,7 @@
             this.DeltaCB.BackColor = System.Drawing.Color.LightGray;
             this.DeltaCB.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
             this.DeltaCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.DeltaCB.Location = new System.Drawing.Point(789, 575);
+            this.DeltaCB.Location = new System.Drawing.Point(755, 575);
             this.DeltaCB.Name = "DeltaCB";
             this.DeltaCB.Size = new System.Drawing.Size(107, 89);
             this.DeltaCB.TabIndex = 80;
@@ -684,14 +684,25 @@
             this.MT4CB.BackColor = System.Drawing.Color.LightGray;
             this.MT4CB.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
             this.MT4CB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MT4CB.Location = new System.Drawing.Point(661, 575);
+            this.MT4CB.Location = new System.Drawing.Point(644, 575);
             this.MT4CB.Name = "MT4CB";
             this.MT4CB.Size = new System.Drawing.Size(107, 89);
             this.MT4CB.TabIndex = 130;
             this.MT4CB.Text = "XuFeng\r\n(MT4)";
             this.MT4CB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.MT4CB.UseVisualStyleBackColor = false;
+            this.MT4CB.Visible = false;
             this.MT4CB.CheckedChanged += new System.EventHandler(this.MT4CB_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(916, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 20);
+            this.label2.TabIndex = 131;
+            this.label2.Text = "Ver 2.4";
             // 
             // TesterIFMain
             // 
@@ -699,6 +710,7 @@
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(978, 744);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.MT4CB);
             this.Controls.Add(this.tBoxSendSOT);
             this.Controls.Add(this.tBoxSOT3);
@@ -810,6 +822,7 @@
         private System.Windows.Forms.TextBox TBoxCS3;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.CheckBox MT4CB;
+        private System.Windows.Forms.Label label2;
     }
 }
 

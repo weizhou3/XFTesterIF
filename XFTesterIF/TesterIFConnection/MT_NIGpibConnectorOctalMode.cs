@@ -89,7 +89,7 @@ namespace XFTesterIF.TesterIFConnection
 #region
                     //debug
                     List<string> debugMsg = new List<string>();
-                    debugMsg.Add("DUT ready, Waiting for Tester to issue SITE request..");
+                    debugMsg.Add("From MT Octal Mode: Waiting for Tester SITES?..");
                     debugMsg.Add(retString);
                     report.DebugMsg = true;
                     report.DebugMsgs.Clear();
@@ -97,7 +97,7 @@ namespace XFTesterIF.TesterIFConnection
                     progress.Report(report);
 #endregion
 
-                    if (retString!=null && retString.Contains("SITES?"))
+                    if (retString!=null) //&& retString.Contains("SITES?"))//TODO-- uncommment for production
                     {
                         break;
                     }
@@ -110,7 +110,7 @@ namespace XFTesterIF.TesterIFConnection
             {
                 string retString = null;
                 //string highestDUT = getMaxDUT(SOT, DUT_CS);
-                List<string> activeDUTs = MTGpibProcessor.getActiveDUT(SOT, DUT_CS);
+                List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
                 string SOTStr = MTGpibProcessor.GetSOTStr(SOT,DUT_CS);
                 NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                 Thread.Sleep(10);
@@ -150,12 +150,13 @@ namespace XFTesterIF.TesterIFConnection
 #region
                         //debug
                         List<string> debugMsg = new List<string>();
-                        debugMsg.Add("SOT sent to Tester, Testing in progress..");
+                        debugMsg.Add("From MT Octal Mode: Received BIN str..");
                         debugMsg.Add(retString);
                         report.DebugMsg = true;
                         report.DebugMsgs.Clear();
                         report.DebugMsgs.AddRange(debugMsg);
                         progress.Report(report);
+                        BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
 
 #endregion
                         
@@ -193,6 +194,20 @@ namespace XFTesterIF.TesterIFConnection
             else
             {   
                 retResult = MTGpibProcessor.GpibDecipher(BINStr, DUT_CS);
+
+#region
+                //debug
+                List<string> debugMsg = new List<string>();
+                debugMsg.Add("From MT Octal Mode1/2: BINStr..");
+                debugMsg.Add(BINStr);
+                debugMsg.Add("From MT Octal Mode2/2: Parsed BIN result..");
+                debugMsg.AddRange(retResult.RxBIN);
+                report.DebugMsg = true;
+                report.DebugMsgs.Clear();
+                report.DebugMsgs.AddRange(debugMsg);
+                progress.Report(report);
+#endregion
+
                 BINStr = null;
 
                 //report.ClrReport();
