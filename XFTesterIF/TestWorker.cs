@@ -43,9 +43,6 @@ namespace XFTesterIF
                 {
                     mbSession = (MessageBasedSession)rmSession.Open(ResourceName);
                     initializeGpib(mbSession);
-                    //report.ClrReport();
-                    //report.ErrMsg = "Session created..";
-                    //progress.Report(report);
                     state = true;
                 }
                 catch (Exception exp)
@@ -55,22 +52,18 @@ namespace XFTesterIF
                     report.ErrMsg = exp.Message;
                     report.CriticalErr = true;
                     progress.Report(report);
-                    //throw new Exception("");
-                    //throw new NotImplementedException("Can not open new MB session, " + exp.Message);
+
                 }
             }
 
-            //initializeGpib(mbSession);
             while (state)
             {
                 if (ct.IsCancellationRequested)
                 {
                     break;
                 }
-
                 try
                 {
-
                     //await Task.Delay(500);
                     //1.get SOT from PLC
                     int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
@@ -181,17 +174,6 @@ namespace XFTesterIF
 
             NIGpibHelper.GpibWrite(mbSession, "tmo 1\r");
             NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r");
-
-            //GpibWrite("stat \r");
-            //HandlerAddress = TBoxAddress.Text;
-            //GpibWrite("caddr " + HandlerAddress + "\r"); //set handler address to 1 设置Handler地址
-
-            
-            //GpibWrite("rsc 0\r");//disable system controller 交出controller权力
-
-   
-            //GpibWrite("tmo 1\r");
-            //GpibCommOK = GpibWrite("rsv \\x00\r");
         }
 
         private bool verifyResult(GpibCommDataModel result)
@@ -206,9 +188,7 @@ namespace XFTesterIF
             lines.Add("cmdType: " + result.cmdType);
             lines.Add("EOT: " + string.Join(" ", result.EOT));
             lines.Add("RxStr: " + result.RxStr);
-            //lines.Add(DateTime.Now.ToString("yyyyMMddHHmmssfff"));
             return lines;
-            //File.AppendAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\DebugOutput", lines);
         }
     }
 }

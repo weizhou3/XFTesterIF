@@ -106,72 +106,74 @@ namespace XFTesterIF.TesterIFConnection
             });
 
             //Task2. Send SOT string and wait for valid BIN string
-            await Task.Run(() =>
+            if (!timedOut || !canceled)
             {
-                string retString = null;
-                //string highestDUT = getMaxDUT(SOT, DUT_CS);
-                List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
-                string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
-                NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
-                Thread.Sleep(10);
-                //NIGpibHelper.GpibWrite(mbSession, "rd #50\r"); --2019.5.23
-
-                //report.ClrReport();
-                report.PercentageCompleted = (int)(2 / totalSteps * 100);
-                report.StageMsg = "SOT sent to Tester, Testing in progress..";
-                report.CS = SOT;
-                progress.Report(report);
-
-                while (true)//implementing original gpibstage 14
+                await Task.Run(() =>
                 {
-                    if (ct.IsCancellationRequested || canceled)
-                    {
-                        canceled = true;
-                        break;
-                    }
-                    else if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
-                    {
-                        timedOut = true;
-                        break;
-                    }
+                    string retString = null;
+                    //string highestDUT = getMaxDUT(SOT, DUT_CS);
+                    List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
+                    string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
+                    NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
+                    Thread.Sleep(10);
+                    //NIGpibHelper.GpibWrite(mbSession, "rd #50\r"); --2019.5.23
 
-                    else if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                    //report.ClrReport();
+                    report.PercentageCompleted = (int)(2 / totalSteps * 100);
+                    report.StageMsg = "SOT sent to Tester, Testing in progress..";
+                    report.CS = SOT;
+                    progress.Report(report);
+
+                    while (true)//implementing original gpibstage 14
                     {
-                        break;
-                    }
-                    //retString = NIGpibHelper.GpibRead(mbSession);--2019.5.23
-                    //if (retString!=null)--2019.5.23
-                    else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
-                    {
-                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
-                        Thread.Sleep(30);
-                        retString = NIGpibHelper.GpibRead(mbSession);
-
-                        #region
-                        //debug
-                        List<string> debugMsg = new List<string>();
-                        debugMsg.Add("SOT sent to Tester, Testing in progress..");
-                        debugMsg.Add(retString);
-                        report.DebugMsg = true;
-                        report.DebugMsgs.Clear();
-                        report.DebugMsgs.AddRange(debugMsg);
-                        progress.Report(report);
-
-                        #endregion
-
-                        if (retString.Contains("A BIN") || retString.Contains("B BIN") || retString.Contains("C BIN") || retString.Contains("D BIN")
-                         || retString.Contains("E BIN") || retString.Contains("F BIN") || retString.Contains("G BIN") || retString.Contains("H BIN"))
+                        if (ct.IsCancellationRequested || canceled)
                         {
-                            BINStr += retString;
-                            //if (!BINStr.Contains(highestDUT))
-                            //{
-                            //    NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
-                            //}--2019.5.23
+                            canceled = true;
+                            break;
+                        }
+                        else if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
+                        {
+                            timedOut = true;
+                            break;
+                        }
+
+                        else if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                        {
+                            break;
+                        }
+                        //retString = NIGpibHelper.GpibRead(mbSession);--2019.5.23
+                        //if (retString!=null)--2019.5.23
+                        else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                        {
+                            NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
+                            Thread.Sleep(30);
+                            retString = NIGpibHelper.GpibRead(mbSession);
+
+#region
+                            //debug
+                            List<string> debugMsg = new List<string>();
+                            debugMsg.Add("SOT sent to Tester, Testing in progress..");
+                            debugMsg.Add(retString);
+                            report.DebugMsg = true;
+                            report.DebugMsgs.Clear();
+                            report.DebugMsgs.AddRange(debugMsg);
+                            progress.Report(report);
+
+#endregion
+
+                            if (retString.Contains("A BIN") || retString.Contains("B BIN") || retString.Contains("C BIN") || retString.Contains("D BIN")
+                                || retString.Contains("E BIN") || retString.Contains("F BIN") || retString.Contains("G BIN") || retString.Contains("H BIN"))
+                            {
+                                BINStr += retString;
+                                //if (!BINStr.Contains(highestDUT))
+                                //{
+                                //    NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
+                                //}--2019.5.23
+                            }
                         }
                     }
-
-                }
-            });
+                }); 
+            }
 
             //3. Parse the string then return CommData
             if (timedOut)

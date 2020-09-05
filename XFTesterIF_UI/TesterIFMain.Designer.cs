@@ -193,6 +193,7 @@
             this.DeltaCB.Text = "XuFeng\r\n(RS)";
             this.DeltaCB.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.DeltaCB.UseVisualStyleBackColor = false;
+            this.DeltaCB.Visible = false;
             this.DeltaCB.CheckedChanged += new System.EventHandler(this.DeltaCB_CheckedChanged);
             this.DeltaCB.Click += new System.EventHandler(this.DeltaCB_CheckedChanged);
             // 

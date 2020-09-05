@@ -57,7 +57,6 @@ namespace XFTesterIF.PLCConnection
             {
                 while (true)
                 {
-
                     if (ct.IsCancellationRequested)
                     {
                         canceled = true;
@@ -78,8 +77,7 @@ namespace XFTesterIF.PLCConnection
                             //report.ErrMsg = "GPIB comm LOST, please restart GPIB";
                             //report.CriticalErr = true;
                             //progress.Report(report);
-                            throw new NotImplementedException("GPIB comm LOST, please restart GPIB");
-                            break;
+                            throw new NotImplementedException("GPIB comm LOST, please restart GPIB");                            
                         }
                         //report.ClrReport();
                         //report.ErrMsg = "GPIB comm OK.." + DateTimeOffset.Now.ToString(); ;
