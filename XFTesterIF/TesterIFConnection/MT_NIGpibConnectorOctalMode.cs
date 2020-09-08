@@ -97,17 +97,18 @@ namespace XFTesterIF.TesterIFConnection
                     progress.Report(report);
 #endregion
                     
-                    //TODO-- uncommment for production
+                    //retString = "SITES?"; //TODO-- commment for production
                     if (retString!=null && retString.Contains("SITES?"))
                     {
                         break;
                     }
                     Thread.Sleep(10);
+                    //await Task.Delay(10);
                 }
             });
 
             //Task2. Send SOT string and wait for valid BIN string
-            if (!timedOut || !canceled)
+            if (!timedOut && !canceled)
             {
                 await Task.Run(() =>
                 {

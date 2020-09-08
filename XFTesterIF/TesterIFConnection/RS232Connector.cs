@@ -18,7 +18,8 @@ namespace XFTesterIF.TesterIFConnection
         public string IFport { get; set; }
         public Progress<ProgressReportModel> progress { get; set; } = new Progress<ProgressReportModel>();
 
-        public Task<GpibCommDataModel> GetTestResultAsync(MessageBasedSession mbSession, int[] SOT, int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
+        public Task<GpibCommDataModel> GetTestResultAsync(MessageBasedSession mbSession, 
+            int[] SOT, int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
         {
             throw new NotImplementedException();
         }

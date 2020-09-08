@@ -155,8 +155,8 @@ namespace XFTesterIF.TesterIFConnection
             for (int i = 0; i < 4; i++)
             {
                 //index[0] = MT.DUT_CS[0] - 1;
-                if (RxBIN[DUT_CS[i] - 1] != null)
-                    binCS[i] = int.Parse(RxBIN[DUT_CS[i] - 1]);
+                //if (RxBIN[DUT_CS[i] - 1] != null)
+                int.TryParse(RxBIN[DUT_CS[i] - 1], out binCS[i]);
             }
             return binCS;
         }

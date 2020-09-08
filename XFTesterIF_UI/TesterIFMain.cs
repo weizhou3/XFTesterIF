@@ -78,12 +78,9 @@ namespace XFTesterIF_UI
                 btnGpibOFF.Enabled = false;
                 btnGpibON.Enabled = true;
                 enableSettingInput();
-                //ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
+                ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
             }
-            
 
-
-            //PortAwakenTimer.Start();
         }
 
         private void ReportProgress(object sender, ProgressReportModel e)
@@ -96,6 +93,7 @@ namespace XFTesterIF_UI
             else if (e.DebugMsg)
             {
                 e.DebugMsgs.Add(DateTime.Now.ToString("yyyy-MMdd-HH:mm:ss"));
+                e.DebugMsgs.Add("=======================================");
                 File.AppendAllLines(AppDomain.CurrentDomain.BaseDirectory + @"\DebugOutput", e.DebugMsgs);
                 e.DebugMsg = false;
             }

@@ -64,7 +64,7 @@ namespace XFTesterIF
                 }
                 try
                 {
-                    //await Task.Delay(500);
+                    await Task.Delay(200);
                     //1.get SOT from PLC
                     int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
                     //int[] SOT = { 1, 1, 0, 1 };//TODO --  comment for production
@@ -75,7 +75,7 @@ namespace XFTesterIF
                         GpibCommDataModel TestResult = await GlobalIF.TesterIF.GetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
                         //GpibCommDataModel TestResult = await GlobalIF.TesterIF.SimulatingGetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);
 
-                        #region
+#region
                         //debug session
                         List<string> debugMsgs = debugOutput(TestResult);
                         report.ClrReport();
@@ -84,7 +84,7 @@ namespace XFTesterIF
                         progress.Report(report);
 
                         //debug session end
-                        #endregion
+#endregion
 
                         //3. verify result --TODO: add result verification
                         resultValid = verifyResult(TestResult);

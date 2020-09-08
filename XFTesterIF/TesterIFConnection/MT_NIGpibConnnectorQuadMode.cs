@@ -52,7 +52,7 @@ namespace XFTesterIF.TesterIFConnection
             DateTimeOffset startTime = DateTimeOffset.Now;
             GpibCommDataModel retResult = new GpibCommDataModel();
             ProgressReportModel report = new ProgressReportModel();
-            double totalSteps = 3;
+            double totalSteps = 2;
             bool timedOut = false;
             bool canceled = false;
             string BINStr = null;
@@ -61,14 +61,17 @@ namespace XFTesterIF.TesterIFConnection
             await Task.Run(() =>
             {
                 string retString = null;
-                NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //0110 0000
+                string SPbyte = getSpbyte(SOT);
+                string highestDUT = getMaxDUT(SOT);
+                NIGpibHelper.GpibWrite(mbSession, "rsv \\x" + SPbyte + "\r");
+                //NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //0110 0000
                 //GpibWrite("rsv \\x60\r"); //set SRQ bit 5,6
-                NIGpibHelper.GpibWrite(mbSession, "rd #30\r");//TODO-- during debugging need to verify is sending RD request once is enough
+                NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//TODO-- during debugging need to verify is sending RD request once is enough
 
                 //report.ClrReport();
+                report.ClrReport();
                 report.PercentageCompleted = (int)(1 / totalSteps * 100);
-                report.StageMsg = "DUT ready, Waiting for Tester to issue SITE request..";
-                report.CS = SOT;
+                report.StageMsg = "Receiving BIN result..";
                 progress.Report(report);
 
                 while (true)
@@ -83,99 +86,43 @@ namespace XFTesterIF.TesterIFConnection
                         timedOut = true;
                         break;
                     }
+                    if (BINStr != null && BINStr.Contains(highestDUT))//need to check all DUTs
+                    {
+                        break;
+                    }
 
+                    Thread.Sleep(10);
                     retString = NIGpibHelper.GpibRead(mbSession);
 
-                    #region
+#region
                     //debug
                     List<string> debugMsg = new List<string>();
-                    debugMsg.Add("DUT ready, Waiting for Tester to issue SITE request..");
+                    debugMsg.Add("From MT4 mode: BIN result..");
                     debugMsg.Add(retString);
                     report.DebugMsg = true;
                     report.DebugMsgs.Clear();
                     report.DebugMsgs.AddRange(debugMsg);
                     progress.Report(report);
-                    #endregion
-
-                    if (retString != null && retString.Contains("SITES?"))
-                    {
-                        break;
-                    }
-                    Thread.Sleep(10);
-                }
-            });
-
-            //Task2. Send SOT string and wait for valid BIN string
-            if (!timedOut || !canceled)
-            {
-                await Task.Run(() =>
-                {
-                    string retString = null;
-                    //string highestDUT = getMaxDUT(SOT, DUT_CS);
-                    List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
-                    string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
-                    NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
-                    Thread.Sleep(10);
-                    //NIGpibHelper.GpibWrite(mbSession, "rd #50\r"); --2019.5.23
-
-                    //report.ClrReport();
-                    report.PercentageCompleted = (int)(2 / totalSteps * 100);
-                    report.StageMsg = "SOT sent to Tester, Testing in progress..";
-                    report.CS = SOT;
-                    progress.Report(report);
-
-                    while (true)//implementing original gpibstage 14
-                    {
-                        if (ct.IsCancellationRequested || canceled)
-                        {
-                            canceled = true;
-                            break;
-                        }
-                        else if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
-                        {
-                            timedOut = true;
-                            break;
-                        }
-
-                        else if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
-                        {
-                            break;
-                        }
-                        //retString = NIGpibHelper.GpibRead(mbSession);--2019.5.23
-                        //if (retString!=null)--2019.5.23
-                        else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
-                        {
-                            NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
-                            Thread.Sleep(30);
-                            retString = NIGpibHelper.GpibRead(mbSession);
-
-#region
-                            //debug
-                            List<string> debugMsg = new List<string>();
-                            debugMsg.Add("SOT sent to Tester, Testing in progress..");
-                            debugMsg.Add(retString);
-                            report.DebugMsg = true;
-                            report.DebugMsgs.Clear();
-                            report.DebugMsgs.AddRange(debugMsg);
-                            progress.Report(report);
-
 #endregion
 
-                            if (retString.Contains("A BIN") || retString.Contains("B BIN") || retString.Contains("C BIN") || retString.Contains("D BIN")
-                                || retString.Contains("E BIN") || retString.Contains("F BIN") || retString.Contains("G BIN") || retString.Contains("H BIN"))
+                    if (retString != null)
+                    {
+                        if (retString.Contains("A BIN") || retString.Contains("B BIN")
+                        || retString.Contains("C BIN") || retString.Contains("D BIN"))
+                        {
+                            BINStr += retString;
+                            if (!BINStr.Contains(highestDUT))//TODO -- may need to check all active DUT
                             {
-                                BINStr += retString;
-                                //if (!BINStr.Contains(highestDUT))
-                                //{
-                                //    NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
-                                //}--2019.5.23
+                                NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
                             }
                         }
                     }
-                }); 
-            }
+                }
+            });
 
-            //3. Parse the string then return CommData
+            
+
+            //2. Parse the string then return CommData
             if (timedOut)
             {
                 //mbSession.Dispose();
@@ -198,7 +145,7 @@ namespace XFTesterIF.TesterIFConnection
                 BINStr = null;
 
                 //report.ClrReport();
-                report.PercentageCompleted = (int)(3 / totalSteps * 100);
+                report.PercentageCompleted = (int)(2 / totalSteps * 100);
                 report.StageMsg = "BIN result obtained, Test cycle finished..";
                 report.CS = SOT;
                 report.BIN = retResult.BIN;
@@ -767,6 +714,53 @@ namespace XFTesterIF.TesterIFConnection
             }
             else
                 return true;
+        }
+
+        private string getSpbyte(int[] SOT)
+        {
+            string spbyte;
+            int[] Spbyte = new int[8];
+            Spbyte[0] = 1;
+            Spbyte[1] = 1;
+            for (int i = 0; i < 4; i++)//set SOT CS1-CS4 @ bit0..3
+            {
+                Spbyte[7 - i] = SOT[i];
+            }
+
+            string[] array1 = Array.ConvertAll(Spbyte, element => element.ToString());
+            spbyte = string.Join("", array1);
+            spbyte = DataManipulateHelper.HexConvert2(spbyte);
+            return spbyte;
+        }
+
+        private string getMaxDUT(int[] SOT)
+        {
+            string S = "";
+            int MaxValue = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                if (SOT[i] == 1)
+                {
+                    MaxValue = i + 1;
+                }
+            }
+
+            switch (MaxValue)
+            {
+                case 1:
+                    S = "A BIN";
+                    break;
+                case 2:
+                    S = "B BIN";
+                    break;
+                case 3:
+                    S = "C BIN";
+                    break;
+                case 4:
+                    S = "D BIN";
+                    break;
+            }
+            return S;
         }
     }
 }
