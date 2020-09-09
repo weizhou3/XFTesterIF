@@ -50,8 +50,8 @@ namespace XFTesterIF_UI
 
             //bool succ = startPlcPort(out string expmsg);
 
-            //if (startPlcPort(out string expmsg))
-            if(true)// TODO -- comment for production
+            if (startPlcPort(out string expmsg))
+            //if(true)// TODO -- comment for production
             {
                 int.TryParse(UserSettings.Default.CommTimeout, out int timeout);
                 cts = new CancellationTokenSource();
@@ -89,7 +89,7 @@ namespace XFTesterIF_UI
                 btnGpibON.Enabled = true;
                 enableSettingInput();
                 //TODO -- uncomment for production
-                //ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
+                ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
             }
 
         }
@@ -313,6 +313,7 @@ namespace XFTesterIF_UI
             TBoxCS4.Enabled = true;
             DeltaCB.Enabled = true;
             MT8CB.Enabled = true;
+            MT4CB.Enabled = true;
         }
 
         private void MTCB_CheckedChanged(object sender, EventArgs e)
