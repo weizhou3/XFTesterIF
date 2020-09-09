@@ -24,7 +24,7 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="CommTimeout" Type="System.String" Scope="User">
-      <Value Profile="(Default)">60</Value>
+      <Value Profile="(Default)">180</Value>
     </Setting>
     <Setting Name="MTDUT_CS1" Type="System.String" Scope="User">
       <Value Profile="(Default)">6</Value>
@@ -38,8 +38,14 @@
     <Setting Name="MTDUT_CS4" Type="System.String" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="CS_MTDUT" Type="System.String" Scope="User">
+    <Setting Name="CS_MT8DUT" Type="System.String" Scope="User">
       <Value Profile="(Default)">6521</Value>
+    </Setting>
+    <Setting Name="CS_MT4DUT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">4321</Value>
+    </Setting>
+    <Setting Name="CS_RSDUT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">1234</Value>
     </Setting>
   </Settings>
 </SettingsFile>

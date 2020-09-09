@@ -33,8 +33,11 @@ namespace XFTesterIF
                             break;
                         case TesterIFProtocol.MTGPIB4:
                             MT_NIGpibConnectorQuadMode MTGPIB4 = new MT_NIGpibConnectorQuadMode();
-                            TesterIF = MTGPIB4;
-                            
+                            TesterIF = MTGPIB4;                            
+                            break;
+                        case TesterIFProtocol.RSGPIB:
+                            RS_NIGpibConnector RSGPIB = new RS_NIGpibConnector();
+                            TesterIF = RSGPIB;
                             break;
 
                         default:

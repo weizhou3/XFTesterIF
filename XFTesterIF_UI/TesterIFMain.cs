@@ -50,26 +50,36 @@ namespace XFTesterIF_UI
 
             //bool succ = startPlcPort(out string expmsg);
 
-            if (startPlcPort(out string expmsg))
-            //if(true)// TODO -- comment for production
+            //if (startPlcPort(out string expmsg))
+            if(true)// TODO -- comment for production
             {
                 int.TryParse(UserSettings.Default.CommTimeout, out int timeout);
                 cts = new CancellationTokenSource();
                 Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
                 progress.ProgressChanged += ReportProgress;
-                
-               // try
-               // {
-                TestWorker worker = new TestWorker(UserSettings.Default.GpibCardAddress, 
-                    UserSettings.Default.CS_MTDUT, UserSettings.Default.HandlerAddress);
-                worker.RunTest(timeout * 1000, cts.Token, progress);
-               // }
-                //catch (NotImplementedException)
-                //{
-                //    ErrMsgBox.Text += "Can not initiate GPIB, please check connection" + Environment.NewLine;
-                //    btnGpibOFF.PerformClick();
-                //}
-                
+
+                // try
+                // {
+
+                if (MT4CB.Checked)
+                {
+                    TestWorker worker = new TestWorker(UserSettings.Default.GpibCardAddress, 
+                        UserSettings.Default.CS_MT4DUT, UserSettings.Default.HandlerAddress);
+                    worker.RunTest(timeout * 1000, cts.Token, progress);
+                }
+                else if (MT8CB.Checked)
+                {
+                    TestWorker worker = new TestWorker(UserSettings.Default.GpibCardAddress,
+                        UserSettings.Default.CS_MT8DUT, UserSettings.Default.HandlerAddress);
+                    worker.RunTest(timeout * 1000, cts.Token, progress);
+
+                }
+                else if (DeltaCB.Checked)
+                {
+                    TestWorker worker = new TestWorker(UserSettings.Default.GpibCardAddress,
+                        UserSettings.Default.CS_RSDUT, UserSettings.Default.HandlerAddress);
+                    worker.RunTest(timeout * 1000, cts.Token, progress);
+                }
             }
             else
             {
@@ -78,7 +88,8 @@ namespace XFTesterIF_UI
                 btnGpibOFF.Enabled = false;
                 btnGpibON.Enabled = true;
                 enableSettingInput();
-                ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
+                //TODO -- uncomment for production
+                //ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
             }
 
         }
@@ -88,6 +99,7 @@ namespace XFTesterIF_UI
             if (e.CriticalErr)
             {
                 e.CriticalErr = false;
+                ErrMsgBox.Text += e.ErrMsg + Environment.NewLine;
                 btnGpibOFF.PerformClick();
             }
             else if (e.DebugMsg)
@@ -242,11 +254,23 @@ namespace XFTesterIF_UI
             //UserSettings.Default.MTDUT_CS2 = TBoxCS2.Text;
             //UserSettings.Default.MTDUT_CS3 = TBoxCS3.Text;
             //UserSettings.Default.MTDUT_CS4 = TBoxCS4.Text;
-            UserSettings.Default.CS_MTDUT = TBoxCS1.Text + TBoxCS2.Text + TBoxCS3.Text + TBoxCS4.Text;
-            if (MT8CB.Checked)
+            
+            if (MT8CB.Checked) 
+            {
                 UserSettings.Default.TesterIFProtocol = "MTGPIB8";
-            if (DeltaCB.Checked)
+                UserSettings.Default.CS_MT8DUT = TBoxCS1.Text + TBoxCS2.Text + TBoxCS3.Text + TBoxCS4.Text;
+            }
+            else if (MT4CB.Checked)
+            {
+                UserSettings.Default.TesterIFProtocol = "MTGPIB4";
+                UserSettings.Default.CS_MT4DUT = TBoxCS1.Text + TBoxCS2.Text + TBoxCS3.Text + TBoxCS4.Text;
+            }                
+            else if (DeltaCB.Checked)
+            {
                 UserSettings.Default.TesterIFProtocol = "RSGPIB";
+                UserSettings.Default.CS_RSDUT = TBoxCS1.Text + TBoxCS2.Text + TBoxCS3.Text + TBoxCS4.Text;
+            }
+                
 
         }
 
@@ -255,10 +279,10 @@ namespace XFTesterIF_UI
             TBoxAddress.Text = UserSettings.Default.HandlerAddress;
             TBoxGpibCardAddr.Text = UserSettings.Default.GpibCardAddress;
             TBoxTimeOut.Text = UserSettings.Default.CommTimeout;
-            TBoxCS1.Text = UserSettings.Default.CS_MTDUT.Substring(0, 1);
-            TBoxCS2.Text = UserSettings.Default.CS_MTDUT.Substring(1, 1);
-            TBoxCS3.Text = UserSettings.Default.CS_MTDUT.Substring(2, 1);
-            TBoxCS4.Text = UserSettings.Default.CS_MTDUT.Substring(3, 1);
+            TBoxCS1.Text = UserSettings.Default.CS_MT8DUT.Substring(0, 1);
+            TBoxCS2.Text = UserSettings.Default.CS_MT8DUT.Substring(1, 1);
+            TBoxCS3.Text = UserSettings.Default.CS_MT8DUT.Substring(2, 1);
+            TBoxCS4.Text = UserSettings.Default.CS_MT8DUT.Substring(3, 1);
             MT8CB.Checked = (UserSettings.Default.TesterIFProtocol == "MTGPIB8");
             DeltaCB.Checked = (UserSettings.Default.TesterIFProtocol == "RSGPIB");
             //updateMtDUT_CS();
@@ -275,6 +299,7 @@ namespace XFTesterIF_UI
             TBoxCS4.Enabled = false;
             DeltaCB.Enabled = false;
             MT8CB.Enabled = false;
+            MT4CB.Enabled = false;
         }
 
         private void enableSettingInput()
@@ -299,6 +324,10 @@ namespace XFTesterIF_UI
                 CB.BackColor = Color.Gold;
                 DeltaCB.Checked = false;
                 MT4CB.Checked = false;
+                TBoxCS1.Text = UserSettings.Default.CS_MT8DUT.Substring(0, 1);
+                TBoxCS2.Text = UserSettings.Default.CS_MT8DUT.Substring(1, 1);
+                TBoxCS3.Text = UserSettings.Default.CS_MT8DUT.Substring(2, 1);
+                TBoxCS4.Text = UserSettings.Default.CS_MT8DUT.Substring(3, 1);
                 TBoxCS1.Visible = true;
                 TBoxCS2.Visible = true;
                 TBoxCS3.Visible = true;
@@ -319,6 +348,10 @@ namespace XFTesterIF_UI
                 CB.BackColor = Color.Gold;
                 DeltaCB.Checked = false;
                 MT8CB.Checked = false;
+                TBoxCS1.Text = UserSettings.Default.CS_MT4DUT.Substring(0, 1);
+                TBoxCS2.Text = UserSettings.Default.CS_MT4DUT.Substring(1, 1);
+                TBoxCS3.Text = UserSettings.Default.CS_MT4DUT.Substring(2, 1);
+                TBoxCS4.Text = UserSettings.Default.CS_MT4DUT.Substring(3, 1);
                 TBoxCS1.Visible = true;
                 TBoxCS2.Visible = true;
                 TBoxCS3.Visible = true;
@@ -339,10 +372,14 @@ namespace XFTesterIF_UI
                 CB.BackColor = Color.Gold;
                 MT8CB.Checked = false;
                 MT4CB.Checked = false;
-                TBoxCS1.Visible = false;
-                TBoxCS2.Visible = false;
-                TBoxCS3.Visible = false;
-                TBoxCS4.Visible = false;
+                TBoxCS1.Text = UserSettings.Default.CS_RSDUT.Substring(0, 1);
+                TBoxCS2.Text = UserSettings.Default.CS_RSDUT.Substring(1, 1);
+                TBoxCS3.Text = UserSettings.Default.CS_RSDUT.Substring(2, 1);
+                TBoxCS4.Text = UserSettings.Default.CS_RSDUT.Substring(3, 1);
+                TBoxCS1.Visible = true;
+                TBoxCS2.Visible = true;
+                TBoxCS3.Visible = true;
+                TBoxCS4.Visible = true;
             }
             else
             {
@@ -364,7 +401,7 @@ namespace XFTesterIF_UI
                 if(!PlcPort.IsOpen)
                     PlcPort.Open();
                 GlobalIF.plcTestingConnection.SetPort(PlcPort);
-                GlobalIF.TesterIF.SetDUTMapping(UserSettings.Default.CS_MTDUT);
+                GlobalIF.TesterIF.SetDUTMapping(UserSettings.Default.CS_MT8DUT);
                 expMsg = "all good";
                 return true;
             }

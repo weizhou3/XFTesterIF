@@ -29,6 +29,8 @@ namespace XFTesterIF.TesterIFConnection
         {
 
         }
+
+        
         public async Task<GpibCommDataModel> GetTestResultAsync(MessageBasedSession mbSession, int[] SOT, 
             int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
         {
@@ -40,15 +42,25 @@ namespace XFTesterIF.TesterIFConnection
             bool canceled = false;
             string BINStr = null;
 
-            //Task1: wait for ATN
+            //ATN check and issue SOT SRQ 
+            //Wait LACS then initiate read
+            //Read BIN
+            //Parse BIN
+
+            //Task1: ATN check and issue SOT SRQ 
             await Task.Run(() =>
             {
-                string RStr = null;
-                int bitAnd = 0;
+                string retString = null;
+                string SPbyte = getSpbyte(SOT);
+                //int bitAnd = 0;
+
+                //NIGpibHelper.GpibWrite(mbSession, "rsv\r");
+                //RStr = NIGpibHelper.GpibRead(mbSession);
 
                 NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r");
                 //GpibWrite("rsv \\x60\r"); //set SRQ bit 5,6
-                NIGpibHelper.GpibWrite(mbSession, "wait 16\r");//wait for ATN 16
+                //NIGpibHelper.GpibWrite(mbSession, "wait 16\r");//wait for ATN 16
+                
 
                 report.ClrReport();
                 report.PercentageCompleted = (int)(1 / totalSteps * 100);
@@ -56,7 +68,7 @@ namespace XFTesterIF.TesterIFConnection
                 report.CS = SOT;
                 progress.Report(report);
 
-                while (RStr == null || bitAnd != 16)
+                while (true)
                 //!RStr.Contains("ATN"))
                 {
                     if (ct.IsCancellationRequested || canceled)
@@ -69,88 +81,51 @@ namespace XFTesterIF.TesterIFConnection
                         timedOut = true;
                         break;
                     }
+                    //NIGpibHelper.GpibWrite(mbSession, "wait 16400\r");//wait for ATN 16 + TIMO 16384
 
-                    RStr = NIGpibHelper.GpibRead(mbSession);//ATN
-
+                    if (retString != null && retString.Contains("Ivi.Visa.IOTimeoutException"))
+                    {
+                        NIGpibHelper.GpibWrite(mbSession, "stat n\r");
+                    }
+                    retString = NIGpibHelper.GpibRead(mbSession);
 #region
                     //debug
+
                     List<string> debugMsg = new List<string>();
                     debugMsg.Add("From RS mode: Waiting for ATN status..");
-                    debugMsg.Add(RStr);
+                    debugMsg.Add(retString);
                     report.DebugMsg = true;
                     report.DebugMsgs.Clear();
                     report.DebugMsgs.AddRange(debugMsg);
                     progress.Report(report);
 #endregion
 
-                    RStr = RStr.Replace("\\r", "").Replace("\\n", "");
-                    try { bitAnd = int.Parse(RStr) & 16; }
-                    catch (Exception) { }
+                    if (NIGpibHelper.CheckGpibStats(4, retString))//4
+                    {
+                        NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r");
+                        NIGpibHelper.GpibWrite(mbSession, "rsv \\x" + SPbyte + "\r");
+                        break;
+                    }
                 }
             });
-            //Task2: Send SOT and wait for LACS
+
+            //Task2: Wait LACS then initiate read
             if (!timedOut && !canceled)
             {
                 await Task.Run(() =>
-                    {
-                        string RStr = null;
-                        int bitAnd = 0;
-                        string SPbyte = getSpbyte(SOT);
-                        NIGpibHelper.GpibWrite(mbSession, "rsv \\x" + SPbyte + "\r");
-                        NIGpibHelper.GpibWrite(mbSession, "wait 4\r");
+                    {   
+                        //int bitAnd = 0;
+                        //string SPbyte = getSpbyte(SOT);
+                        //NIGpibHelper.GpibWrite(mbSession, "rsv \\x" + SPbyte + "\r");
+                        //NIGpibHelper.GpibWrite(mbSession, "wait 4\r");                        
 
-                        report.ClrReport();
+                        //report.ClrReport();
                         report.PercentageCompleted = (int)(2 / totalSteps * 100);
                         report.StageMsg = "SOT sent, Waiting for Tester BIN..";
                         report.CS = SOT;
                         progress.Report(report);
 
-                        while (RStr == null || bitAnd != 4)
-                        {
-                            if (ct.IsCancellationRequested || canceled)
-                            {
-                                canceled = true;
-                                break;
-                            }
-                            if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
-                            {
-                                timedOut = true;
-                                break;
-                            }
-
-                            RStr = NIGpibHelper.GpibRead(mbSession);
-
-#region
-                    //debug
-                            List<string> debugMsg = new List<string>();
-                            debugMsg.Add("From RS mode: Waiting for LACS status..");
-                            debugMsg.Add(RStr);
-                            report.DebugMsg = true;
-                            report.DebugMsgs.Clear();
-                            report.DebugMsgs.AddRange(debugMsg);
-                            progress.Report(report);
-#endregion
-                            RStr = RStr.Replace("\\r", "").Replace("\\n", "");
-                            try { bitAnd = int.Parse(RStr) & 4; }
-                            catch (Exception) { }
-                        }
-                    }); 
-            }
-
-
-            //Task3: Read BIN 
-            if (!timedOut && !canceled)
-            {
-                await Task.Run(() =>
-                {
                         string retString = null;
-                        string highestDUT = getMaxDUT(SOT);
-                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//read BIN from GPIB
-
-                        report.ClrReport();
-                        report.PercentageCompleted = (int)(3 / totalSteps * 100);
-                        report.StageMsg = "Receiving BIN result..";
-                        progress.Report(report);
 
                         while (true)
                         {
@@ -164,42 +139,106 @@ namespace XFTesterIF.TesterIFConnection
                                 timedOut = true;
                                 break;
                             }
-                            if (BINStr != null && BINStr.Contains(highestDUT))//need to check all DUTs
+                            if (retString != null && retString.Contains("Ivi.Visa.IOTimeoutException"))
                             {
-                                break;
+                                NIGpibHelper.GpibWrite(mbSession, "stat n\r");
                             }
-
-                            Thread.Sleep(10);
                             retString = NIGpibHelper.GpibRead(mbSession);
 
-#region
-                    //debug
+                            #region debug
+
                             List<string> debugMsg = new List<string>();
-                            debugMsg.Add("From RS mode: BIN result..");
+                            debugMsg.Add("From RS Mode: 2/4 Waiting LACS for BIN results..");
                             debugMsg.Add(retString);
                             report.DebugMsg = true;
                             report.DebugMsgs.Clear();
                             report.DebugMsgs.AddRange(debugMsg);
                             progress.Report(report);
-#endregion
+                            //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
+                            #endregion
 
-                            if (retString != null)
+                            if (NIGpibHelper.CheckGpibStats(2, retString))//2
                             {
-                                if (retString.Contains("A BIN") || retString.Contains("B BIN")
+                                NIGpibHelper.GpibWrite(mbSession, "rd #50\r"); //read for BINs
+                                break;
+                            }
+                            //retString = NIGpibHelper.GpibRead(mbSession);
+                            //retString = retString.Replace("\\r", "").Replace("\\n", "");
+                            //int.TryParse(retString, out int stats);
+                            //int bitAnd = stats & (1 << 2);
+                            //if (bitAnd == 1 << 2)
+                            //{
+                            //    break;
+                            //}                        
+                        }
+                    }); 
+            }
+
+
+            //Task3: Read BIN 
+            if (!timedOut && !canceled)
+            {
+                await Task.Run(() =>
+                {
+                    string retString = null;
+                    //string highestDUT = getMaxDUT(SOT);
+                    List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
+                    //NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//read BIN from GPIB
+
+                    //report.ClrReport();
+                    report.PercentageCompleted = (int)(3 / totalSteps * 100);
+                    report.StageMsg = "Receiving BIN result..";
+                    progress.Report(report);
+
+                    while (true)
+                    {
+                        if (ct.IsCancellationRequested || canceled)
+                        {
+                            canceled = true;
+                            break;
+                        }
+                        if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
+                        {
+                            timedOut = true;
+                            break;
+                        }
+                        if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))//need to check all DUTs
+                        {
+                            break;
+                        }
+                        else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                        {
+                            //NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
+                            //Thread.Sleep(30);
+                            retString = NIGpibHelper.GpibRead(mbSession);
+
+                            #region debug
+
+                            List<string> debugMsg = new List<string>();
+                            debugMsg.Add("From RS Mode: 3/4 Received BIN str.." + "SOT == " + string.Join("", SOT));
+                            debugMsg.Add(retString);
+                            report.DebugMsg = true;
+                            report.DebugMsgs.Clear();
+                            report.DebugMsgs.AddRange(debugMsg);
+                            progress.Report(report);
+                            //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
+                            #endregion
+
+                            if (retString.Contains("A BIN") || retString.Contains("B BIN")
                                 || retString.Contains("C BIN") || retString.Contains("D BIN"))
-                                {
-                                    BINStr += retString;
-                                    if (!BINStr.Contains(highestDUT))//TODO -- may need to check all active DUT
-                                    {
-                                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
-                                    }
-                                }
+                            {
+                                BINStr += retString;
+                            }
+                            else if (retString != null && retString.Contains("Ivi.Visa.IOTimeoutException"))
+                            {
+                                NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
                             }
                         }
+                    }
                 }); 
             }
 
-            //Send result to PLC
+            //Task4. Send result to PLC
             if (timedOut)
             {
                 throw new TimeoutException("EOT has timed out");
@@ -215,9 +254,23 @@ namespace XFTesterIF.TesterIFConnection
             else
             {
                 retResult = RSGpibProcessor.GpibDecipher(BINStr);
+
+#region
+                //debug
+                List<string> debugMsg = new List<string>();
+                debugMsg.Add("From RS Mode 4/4 1/2: BINStr..");
+                debugMsg.Add(BINStr);
+                debugMsg.Add("From RS Mode 4/4 2/2: Parsed BIN result..");
+                debugMsg.AddRange(retResult.RxBIN);
+                report.DebugMsg = true;
+                report.DebugMsgs.Clear();
+                report.DebugMsgs.AddRange(debugMsg);
+                progress.Report(report);
+#endregion
+
                 BINStr = null;
 
-                report.ClrReport();
+                //report.ClrReport();
                 report.PercentageCompleted = (int)(4 / totalSteps * 100);
                 report.StageMsg = "BIN result obtained, Test cycle finished..";
                 report.CS = SOT;
@@ -233,8 +286,8 @@ namespace XFTesterIF.TesterIFConnection
         {
             string spbyte;
             int[] Spbyte = new int[8];
-            Spbyte[1] = 1;
             Spbyte[0] = 0;
+            Spbyte[1] = 1;            
             for (int i = 0; i < 4; i++)//set SOT CS1-CS4 @ bit0..3
             {
                 Spbyte[7 - i] = SOT[i];

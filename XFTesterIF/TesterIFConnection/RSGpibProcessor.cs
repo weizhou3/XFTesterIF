@@ -81,5 +81,41 @@ namespace XFTesterIF.TesterIFConnection
             return binCS;
         }
 
+        public static List<string> GetActiveDUT(int[] SOT, int[] DUT_CS)
+        {
+            List<string> S = new List<string>();
+            //List<int> CS = new List<int>();
+            int[] CS = new int[4];
+            //int[] DUT_CS = new int[4];
+            for (int i = 0; i < 4; i++)
+            {
+                //DUT_CS[i] = int.Parse(MappingCS_DUT.Substring(i, 1));
+                CS[i] = DUT_CS[i] * SOT[i];
+                switch (CS[i])
+                {
+                    case 1:
+                        S.Add("A BIN");
+                        break;
+                    case 2:
+                        S.Add("B BIN");
+                        break;
+                    case 3:
+                        S.Add("C BIN");
+                        break;
+                    case 4:
+                        S.Add("D BIN");
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            //int MaxValue = CS.Max();
+            //int MaxIndex = MT.DUT_CS.ToList().IndexOf(MaxValue);
+
+
+            return S;
+        }
+
     }
 }

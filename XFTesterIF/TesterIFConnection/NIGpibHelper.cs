@@ -44,6 +44,19 @@ namespace XFTesterIF.TesterIFConnection
             return s.Replace("\n", "\\n").Replace("\r", "\\r");
         }
 
-        
+        public static bool CheckGpibStats(int bit, string retString)
+        {
+            retString = retString.Replace("\\r", "").Replace("\\n", "");
+            int.TryParse(retString, out int stats);
+            int bitAnd = stats & (1 << bit);
+            if (bitAnd == 1 << bit)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

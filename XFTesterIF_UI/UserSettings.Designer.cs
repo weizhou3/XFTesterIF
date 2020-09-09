@@ -109,7 +109,7 @@ namespace XFTesterIF_UI {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        [global::System.Configuration.DefaultSettingValueAttribute("180")]
         public string CommTimeout {
             get {
                 return ((string)(this["CommTimeout"]));
@@ -170,12 +170,36 @@ namespace XFTesterIF_UI {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("6521")]
-        public string CS_MTDUT {
+        public string CS_MT8DUT {
             get {
-                return ((string)(this["CS_MTDUT"]));
+                return ((string)(this["CS_MT8DUT"]));
             }
             set {
-                this["CS_MTDUT"] = value;
+                this["CS_MT8DUT"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("4321")]
+        public string CS_MT4DUT {
+            get {
+                return ((string)(this["CS_MT4DUT"]));
+            }
+            set {
+                this["CS_MT4DUT"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1234")]
+        public string CS_RSDUT {
+            get {
+                return ((string)(this["CS_RSDUT"]));
+            }
+            set {
+                this["CS_RSDUT"] = value;
             }
         }
     }

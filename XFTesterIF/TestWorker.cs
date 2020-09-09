@@ -22,7 +22,7 @@ namespace XFTesterIF
         private bool resultValid { get; set; }
 
         //public SerialPort GpibPort { get; set; }
-        public TestWorker(string portNumber, string CS_MTDUT, string handlerAddress)
+        public TestWorker(string portNumber, string CS_DUT, string handlerAddress)
         {
             //GpibPort = port;
             ResourceName = "ASRL" + portNumber + "::INSTR";
@@ -30,7 +30,7 @@ namespace XFTesterIF
             HandlerAddress = handlerAddress;
             for (int i = 0; i < 4; i++)
             {
-                DUT_CS[i] = int.Parse(CS_MTDUT.Substring(i, 1));
+                DUT_CS[i] = int.Parse(CS_DUT.Substring(i, 1));
             }
         }
         public async void RunTest(int timeout, CancellationToken ct, IProgress<ProgressReportModel> progress)
@@ -66,8 +66,8 @@ namespace XFTesterIF
                 {
                     await Task.Delay(200);
                     //1.get SOT from PLC
-                    int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
-                    //int[] SOT = { 1, 1, 0, 1 };//TODO --  comment for production
+                    //int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
+                    int[] SOT = { 1, 1, 0, 1 };//TODO --  comment for production
 
                     if (SOT!=null)
                     {
@@ -167,13 +167,25 @@ namespace XFTesterIF
 
         private void initializeGpib(MessageBasedSession mbSession)
         {
-            NIGpibHelper.GpibWrite(mbSession, "stat \r");
+            //NIGpibHelper.GpibWrite(mbSession, "stat s\r");
+
+            //NIGpibHelper.GpibWrite(mbSession, "caddr\r");
+            //string stats = NIGpibHelper.GpibRead(mbSession);
+
             //HandlerAddress = TBoxAddress.Text;
             NIGpibHelper.GpibWrite(mbSession, "caddr " + HandlerAddress + "\r"); //set handler address to 1 设置Handler地址
             NIGpibHelper.GpibWrite(mbSession, "rsc 0\r");//disable system controller 交出controller权力
 
             NIGpibHelper.GpibWrite(mbSession, "tmo 1\r");
             NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r");
+
+            //NIGpibHelper.GpibWrite(mbSession, "caddr 3\r");
+            //NIGpibHelper.GpibWrite(mbSession, "caddr\r");
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    string stats = NIGpibHelper.GpibRead(mbSession);
+            //}
+            
         }
 
         private bool verifyResult(GpibCommDataModel result)
