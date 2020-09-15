@@ -82,7 +82,6 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.MT4CB = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.DebugPage = new System.Windows.Forms.Button();
             this.tBoxSendSOT = new System.Windows.Forms.Button();
             this.tBoxSOT3 = new System.Windows.Forms.TextBox();
             this.tBoxSOT4 = new System.Windows.Forms.TextBox();
@@ -652,18 +651,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 20);
             this.label2.TabIndex = 131;
-            this.label2.Text = "Ver 2.4.2";
-            // 
-            // DebugPage
-            // 
-            this.DebugPage.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.DebugPage.Location = new System.Drawing.Point(510, 693);
-            this.DebugPage.Name = "DebugPage";
-            this.DebugPage.Size = new System.Drawing.Size(141, 48);
-            this.DebugPage.TabIndex = 132;
-            this.DebugPage.Text = "Debug";
-            this.DebugPage.UseVisualStyleBackColor = true;
-            this.DebugPage.Click += new System.EventHandler(this.DebugPage_Click);
+            this.label2.Text = "Ver 2.4.3";
             // 
             // tBoxSendSOT
             // 
@@ -742,7 +730,6 @@
             this.Controls.Add(this.tBoxSOT4);
             this.Controls.Add(this.tBoxSOT2);
             this.Controls.Add(this.tBoxSOT1);
-            this.Controls.Add(this.DebugPage);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.MT4CB);
             this.Controls.Add(this.BtnMsgClr);
@@ -846,7 +833,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.CheckBox MT4CB;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button DebugPage;
         private System.Windows.Forms.Button tBoxSendSOT;
         private System.Windows.Forms.TextBox tBoxSOT3;
         private System.Windows.Forms.TextBox tBoxSOT4;
