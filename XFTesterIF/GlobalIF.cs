@@ -16,7 +16,9 @@ namespace XFTesterIF
     {
         public static ITesterIFConnection TesterIF { get; private set; }
         public static IPlcTestingConnection plcTestingConnection { get; private set; }
-        
+        public static bool DebugMode { get; set; } = false;
+        public static int[] DebugSOT { get; set; } = { 0, 0, 0, 0 };
+
         public static void InitializeIFConnections(TesterIFType IFType, TesterIFProtocol IFProtocol)
         {
             OmronFINsTestingConnector fINsTestingConnector = new OmronFINsTestingConnector();

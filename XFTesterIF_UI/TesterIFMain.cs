@@ -23,7 +23,8 @@ namespace XFTesterIF_UI
     {
 
         CancellationTokenSource cts;
-        
+        //public bool DebugMode { get; set; }
+
         public TesterIFMain()
         {
             InitializeComponent();
@@ -49,21 +50,22 @@ namespace XFTesterIF_UI
             initializeIFconnector();
 
             //bool succ = startPlcPort(out string expmsg);
-
-            if (startPlcPort(out string expmsg))
-            //if(true)// TODO -- comment for production
+            if (GlobalIF.DebugMode || startPlcPort(out string expmsg))
             {
+                if (GlobalIF.DebugMode)
+                {
+                    DebugPage frm = new DebugPage();
+                    frm.Owner = this;
+                    frm.Show();
+                }
                 int.TryParse(UserSettings.Default.CommTimeout, out int timeout);
                 cts = new CancellationTokenSource();
                 Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
                 progress.ProgressChanged += ReportProgress;
 
-                // try
-                // {
-
                 if (MT4CB.Checked)
                 {
-                    TestWorker worker = new TestWorker(UserSettings.Default.GpibCardAddress, 
+                    TestWorker worker = new TestWorker(UserSettings.Default.GpibCardAddress,
                         UserSettings.Default.CS_MT4DUT, UserSettings.Default.HandlerAddress);
                     worker.RunTest(timeout * 1000, cts.Token, progress);
                 }
@@ -91,7 +93,6 @@ namespace XFTesterIF_UI
                 //TODO -- uncomment for production
                 ErrMsgBox.Text += expmsg + "Please check PLC connection and try again.." + Environment.NewLine;
             }
-
         }
 
         private void ReportProgress(object sender, ProgressReportModel e)
@@ -169,9 +170,9 @@ namespace XFTesterIF_UI
             btnGpibON.Enabled = true;
             btnGpibOFF.Enabled = false;
             progressBarCS1.Value = 0;
-            progressBarCS1.Value = 0;
-            progressBarCS1.Value = 0;
-            progressBarCS1.Value = 0;
+            progressBarCS2.Value = 0;
+            progressBarCS3.Value = 0;
+            progressBarCS4.Value = 0;
             lblTiP.Visible = false;
             if (PlcPort.IsOpen)
                 PlcPort.Close();
@@ -300,6 +301,22 @@ namespace XFTesterIF_UI
             DeltaCB.Enabled = false;
             MT8CB.Enabled = false;
             MT4CB.Enabled = false;
+            foreach (Form frm in Application.OpenForms)
+            {
+                if (frm is DebugPage)
+                {
+                    try
+                    {
+                        frm.Close();
+                        break;
+                    }
+                    catch (Exception)
+                    {
+
+                        //throw;
+                    } 
+                }
+            }
         }
 
         private void enableSettingInput()
@@ -446,6 +463,30 @@ namespace XFTesterIF_UI
         private void BtnMsgClr_Click(object sender, EventArgs e)
         {
             ErrMsgBox.Clear();
+        }
+
+        private void DebugPage_Click(object sender, EventArgs e)
+        {
+            DebugPage frm = new DebugPage();
+            frm.Owner = this;
+            frm.Show();
+            //frm.VisibleChanged += subf
+
+        }
+
+        private void cbDebugMode_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox cb = (CheckBox)sender;
+            if (cb.Checked)
+            {
+                GlobalIF.DebugMode = true;
+                cb.BackColor = Color.Gold;
+            }
+            else
+            {
+                GlobalIF.DebugMode = false;
+                cb.BackColor = Color.LightGray;
+            }
         }
     }
 }

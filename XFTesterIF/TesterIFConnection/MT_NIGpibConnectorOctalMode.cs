@@ -71,6 +71,17 @@ namespace XFTesterIF.TesterIFConnection
 
                 while (true)
                 {
+#region debug
+
+                    List<string> debugMsg = new List<string>();
+                    debugMsg.Add("From MT Octal Mode: 0/6 Waiting ATN..");
+                    debugMsg.Add(retString);
+                    report.DebugMsg = true;
+                    report.DebugMsgs.Clear();
+                    report.DebugMsgs.AddRange(debugMsg);
+                    progress.Report(report);
+                    //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
+#endregion
                     if (ct.IsCancellationRequested || canceled)
                     {
                         canceled = true;
@@ -83,20 +94,20 @@ namespace XFTesterIF.TesterIFConnection
                     }
                     if (retString != null && retString.Contains("Ivi.Visa.IOTimeoutException"))
                     {
+#region debug
+                        //List<string> debugMsg = new List<string>();
+                        debugMsg.Add("From MT Octal Mode: sending first stat n\r..");
+                        debugMsg.Add(retString);
+                        report.DebugMsg = true;
+                        report.DebugMsgs.Clear();
+                        report.DebugMsgs.AddRange(debugMsg);
+                        progress.Report(report);
+                        //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
+#endregion
                         NIGpibHelper.GpibWrite(mbSession, "stat n\r");
                     }
 
-#region debug
 
-                    List<string> debugMsg = new List<string>();
-                    debugMsg.Add("From MT Octal Mode: 0/6 Waiting ATN..");
-                    debugMsg.Add(retString);
-                    report.DebugMsg = true;
-                    report.DebugMsgs.Clear();
-                    report.DebugMsgs.AddRange(debugMsg);
-                    progress.Report(report);
-                    //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
-#endregion
 
                     retString = NIGpibHelper.GpibRead(mbSession);
                     if (NIGpibHelper.CheckGpibStats(4, retString))//4
@@ -104,6 +115,15 @@ namespace XFTesterIF.TesterIFConnection
                         NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r"); //reset spbyte
                         NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //spbyte: 0110 0000
                         break;
+                    }
+                    else if (GlobalIF.DebugMode)
+                    {
+                        if (NIGpibHelper.CheckGpibStats(8, retString))
+                        {
+                            NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r"); //reset spbyte
+                            NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //spbyte: 0110 0000
+                            break;
+                        }                        
                     }
                     //retString = NIGpibHelper.GpibRead(mbSession);
                     //retString = retString.Replace("\\r", "").Replace("\\n", "");
@@ -167,6 +187,14 @@ namespace XFTesterIF.TesterIFConnection
                             NIGpibHelper.GpibWrite(mbSession, "rd #30\r"); //read for SITES?
                             break;
                         }
+                        else if (GlobalIF.DebugMode)
+                        {
+                            if (NIGpibHelper.CheckGpibStats(8, retString))
+                            {
+                                
+                                break;
+                            }
+                        }
                         //retString = NIGpibHelper.GpibRead(mbSession);
                         //retString = retString.Replace("\\r", "").Replace("\\n", "");
                         //int.TryParse(retString, out int stats);
@@ -223,6 +251,11 @@ namespace XFTesterIF.TesterIFConnection
                         {
                             break;
                         }
+                        else if (GlobalIF.DebugMode)
+                        {
+                                break;
+                            
+                        }
                         Thread.Sleep(10);
                         //await Task.Delay(10);
                     }
@@ -278,6 +311,14 @@ namespace XFTesterIF.TesterIFConnection
                         {   
                             NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");//send SOT str to tester
                             break;
+                        }
+                        else if (GlobalIF.DebugMode)
+                        {
+                            if (NIGpibHelper.CheckGpibStats(8, retString))
+                            {
+                                
+                                break;
+                            }
                         }
                         //retString = retString.Replace("\\r", "").Replace("\\n", "");
                         //int.TryParse(retString, out int stats);
@@ -339,6 +380,14 @@ namespace XFTesterIF.TesterIFConnection
                             NIGpibHelper.GpibWrite(mbSession, "rd #50\r");//initiate read from tester
                             break;
                         }
+                        else if (GlobalIF.DebugMode)
+                        {
+                            if (NIGpibHelper.CheckGpibStats(8, retString))
+                            {
+                                
+                                break;
+                            }
+                        }
                     }
                 });
             }
@@ -377,7 +426,13 @@ namespace XFTesterIF.TesterIFConnection
                             timedOut = true;
                             break;
                         }
+                        
                         if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                        {
+                            break;
+                        }
+
+                        if (GlobalIF.DebugMode)
                         {
                             break;
                         }
@@ -434,6 +489,10 @@ namespace XFTesterIF.TesterIFConnection
                 progress.Report(report);
                 ct.ThrowIfCancellationRequested();
                 return null;
+            }
+            else if (GlobalIF.DebugMode)
+            {
+                throw new NotImplementedException("DebugMode cycle compeleted in MT8 mode");
             }
             else
             {   

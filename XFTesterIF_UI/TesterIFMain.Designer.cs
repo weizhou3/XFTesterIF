@@ -63,11 +63,6 @@
             this.BtnMsgClr = new System.Windows.Forms.Button();
             this.ErrMsgBox = new System.Windows.Forms.TextBox();
             this.label30 = new System.Windows.Forms.Label();
-            this.tBoxSOT1 = new System.Windows.Forms.TextBox();
-            this.tBoxSOT2 = new System.Windows.Forms.TextBox();
-            this.tBoxSOT4 = new System.Windows.Forms.TextBox();
-            this.tBoxSOT3 = new System.Windows.Forms.TextBox();
-            this.tBoxSendSOT = new System.Windows.Forms.Button();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.TBoxCS1 = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -87,6 +82,13 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.MT4CB = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.DebugPage = new System.Windows.Forms.Button();
+            this.tBoxSendSOT = new System.Windows.Forms.Button();
+            this.tBoxSOT3 = new System.Windows.Forms.TextBox();
+            this.tBoxSOT4 = new System.Windows.Forms.TextBox();
+            this.tBoxSOT2 = new System.Windows.Forms.TextBox();
+            this.tBoxSOT1 = new System.Windows.Forms.TextBox();
+            this.cbDebugMode = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
@@ -436,57 +438,6 @@
             this.label30.TabIndex = 122;
             this.label30.Text = "System Message";
             // 
-            // tBoxSOT1
-            // 
-            this.tBoxSOT1.Location = new System.Drawing.Point(375, 195);
-            this.tBoxSOT1.Name = "tBoxSOT1";
-            this.tBoxSOT1.Size = new System.Drawing.Size(56, 35);
-            this.tBoxSOT1.TabIndex = 125;
-            this.tBoxSOT1.Text = "0";
-            this.tBoxSOT1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tBoxSOT1.Visible = false;
-            // 
-            // tBoxSOT2
-            // 
-            this.tBoxSOT2.Location = new System.Drawing.Point(461, 195);
-            this.tBoxSOT2.Name = "tBoxSOT2";
-            this.tBoxSOT2.Size = new System.Drawing.Size(56, 35);
-            this.tBoxSOT2.TabIndex = 126;
-            this.tBoxSOT2.Text = "0";
-            this.tBoxSOT2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tBoxSOT2.Visible = false;
-            // 
-            // tBoxSOT4
-            // 
-            this.tBoxSOT4.Location = new System.Drawing.Point(461, 138);
-            this.tBoxSOT4.Name = "tBoxSOT4";
-            this.tBoxSOT4.Size = new System.Drawing.Size(56, 35);
-            this.tBoxSOT4.TabIndex = 127;
-            this.tBoxSOT4.Text = "0";
-            this.tBoxSOT4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tBoxSOT4.Visible = false;
-            // 
-            // tBoxSOT3
-            // 
-            this.tBoxSOT3.Location = new System.Drawing.Point(375, 138);
-            this.tBoxSOT3.Name = "tBoxSOT3";
-            this.tBoxSOT3.Size = new System.Drawing.Size(56, 35);
-            this.tBoxSOT3.TabIndex = 128;
-            this.tBoxSOT3.Text = "0";
-            this.tBoxSOT3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tBoxSOT3.Visible = false;
-            // 
-            // tBoxSendSOT
-            // 
-            this.tBoxSendSOT.Location = new System.Drawing.Point(386, 251);
-            this.tBoxSendSOT.Name = "tBoxSendSOT";
-            this.tBoxSendSOT.Size = new System.Drawing.Size(103, 38);
-            this.tBoxSendSOT.TabIndex = 129;
-            this.tBoxSendSOT.Text = "SOT";
-            this.tBoxSendSOT.UseVisualStyleBackColor = true;
-            this.tBoxSendSOT.Visible = false;
-            this.tBoxSendSOT.Click += new System.EventHandler(this.tBoxSendSOT_Click);
-            // 
             // pictureBox4
             // 
             this.pictureBox4.BackColor = System.Drawing.SystemColors.Info;
@@ -701,7 +652,83 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 20);
             this.label2.TabIndex = 131;
-            this.label2.Text = "Ver 2.4.1";
+            this.label2.Text = "Ver 2.4.2";
+            // 
+            // DebugPage
+            // 
+            this.DebugPage.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.DebugPage.Location = new System.Drawing.Point(510, 693);
+            this.DebugPage.Name = "DebugPage";
+            this.DebugPage.Size = new System.Drawing.Size(141, 48);
+            this.DebugPage.TabIndex = 132;
+            this.DebugPage.Text = "Debug";
+            this.DebugPage.UseVisualStyleBackColor = true;
+            this.DebugPage.Click += new System.EventHandler(this.DebugPage_Click);
+            // 
+            // tBoxSendSOT
+            // 
+            this.tBoxSendSOT.Location = new System.Drawing.Point(397, 290);
+            this.tBoxSendSOT.Name = "tBoxSendSOT";
+            this.tBoxSendSOT.Size = new System.Drawing.Size(103, 38);
+            this.tBoxSendSOT.TabIndex = 143;
+            this.tBoxSendSOT.Text = "SOT";
+            this.tBoxSendSOT.UseVisualStyleBackColor = true;
+            this.tBoxSendSOT.Visible = false;
+            // 
+            // tBoxSOT3
+            // 
+            this.tBoxSOT3.Location = new System.Drawing.Point(386, 177);
+            this.tBoxSOT3.Name = "tBoxSOT3";
+            this.tBoxSOT3.Size = new System.Drawing.Size(56, 35);
+            this.tBoxSOT3.TabIndex = 142;
+            this.tBoxSOT3.Text = "0";
+            this.tBoxSOT3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tBoxSOT3.Visible = false;
+            // 
+            // tBoxSOT4
+            // 
+            this.tBoxSOT4.Location = new System.Drawing.Point(472, 177);
+            this.tBoxSOT4.Name = "tBoxSOT4";
+            this.tBoxSOT4.Size = new System.Drawing.Size(56, 35);
+            this.tBoxSOT4.TabIndex = 141;
+            this.tBoxSOT4.Text = "0";
+            this.tBoxSOT4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tBoxSOT4.Visible = false;
+            // 
+            // tBoxSOT2
+            // 
+            this.tBoxSOT2.Location = new System.Drawing.Point(472, 234);
+            this.tBoxSOT2.Name = "tBoxSOT2";
+            this.tBoxSOT2.Size = new System.Drawing.Size(56, 35);
+            this.tBoxSOT2.TabIndex = 140;
+            this.tBoxSOT2.Text = "0";
+            this.tBoxSOT2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tBoxSOT2.Visible = false;
+            // 
+            // tBoxSOT1
+            // 
+            this.tBoxSOT1.Location = new System.Drawing.Point(386, 234);
+            this.tBoxSOT1.Name = "tBoxSOT1";
+            this.tBoxSOT1.Size = new System.Drawing.Size(56, 35);
+            this.tBoxSOT1.TabIndex = 139;
+            this.tBoxSOT1.Text = "0";
+            this.tBoxSOT1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tBoxSOT1.Visible = false;
+            // 
+            // cbDebugMode
+            // 
+            this.cbDebugMode.Appearance = System.Windows.Forms.Appearance.Button;
+            this.cbDebugMode.BackColor = System.Drawing.Color.LightGray;
+            this.cbDebugMode.FlatAppearance.CheckedBackColor = System.Drawing.Color.Gold;
+            this.cbDebugMode.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbDebugMode.Location = new System.Drawing.Point(806, 27);
+            this.cbDebugMode.Name = "cbDebugMode";
+            this.cbDebugMode.Size = new System.Drawing.Size(160, 57);
+            this.cbDebugMode.TabIndex = 144;
+            this.cbDebugMode.Text = "DebugMode";
+            this.cbDebugMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.cbDebugMode.UseVisualStyleBackColor = false;
+            this.cbDebugMode.CheckedChanged += new System.EventHandler(this.cbDebugMode_CheckedChanged);
             // 
             // TesterIFMain
             // 
@@ -709,13 +736,15 @@
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(978, 744);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.MT4CB);
+            this.Controls.Add(this.cbDebugMode);
             this.Controls.Add(this.tBoxSendSOT);
             this.Controls.Add(this.tBoxSOT3);
             this.Controls.Add(this.tBoxSOT4);
             this.Controls.Add(this.tBoxSOT2);
             this.Controls.Add(this.tBoxSOT1);
+            this.Controls.Add(this.DebugPage);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.MT4CB);
             this.Controls.Add(this.BtnMsgClr);
             this.Controls.Add(this.ErrMsgBox);
             this.Controls.Add(this.label30);
@@ -797,11 +826,6 @@
         private System.Windows.Forms.ProgressBar progressBarCS4;
         private System.Windows.Forms.ProgressBar progressBarCS1;
         private System.Windows.Forms.ProgressBar progressBarCS2;
-        private System.Windows.Forms.TextBox tBoxSOT1;
-        private System.Windows.Forms.TextBox tBoxSOT2;
-        private System.Windows.Forms.TextBox tBoxSOT4;
-        private System.Windows.Forms.TextBox tBoxSOT3;
-        private System.Windows.Forms.Button tBoxSendSOT;
         private System.Windows.Forms.Label lblTiP;
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.TextBox TBoxCS1;
@@ -822,6 +846,13 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.CheckBox MT4CB;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button DebugPage;
+        private System.Windows.Forms.Button tBoxSendSOT;
+        private System.Windows.Forms.TextBox tBoxSOT3;
+        private System.Windows.Forms.TextBox tBoxSOT4;
+        private System.Windows.Forms.TextBox tBoxSOT2;
+        private System.Windows.Forms.TextBox tBoxSOT1;
+        private System.Windows.Forms.CheckBox cbDebugMode;
     }
 }
 

@@ -37,6 +37,7 @@ namespace XFTesterIF
         {
             ProgressReportModel report = new ProgressReportModel();
             bool state = false;
+            
             using (var rmSession = new ResourceManager())
             {
                 try
@@ -64,12 +65,21 @@ namespace XFTesterIF
                 }
                 try
                 {
+                    int[] SOT = { 0, 0, 0, 0 };
                     await Task.Delay(200);
+                    if (GlobalIF.DebugMode)
+                    {
+                        SOT = GlobalIF.DebugSOT;
+                    }
+                    else
+                    {
+                        SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession);
+                    }
                     //1.get SOT from PLC
-                    int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
+                    //int[] SOT = await GlobalIF.plcTestingConnection.GetSOTAsync(ct, progress, mbSession); 
                     //int[] SOT = { 1, 1, 0, 1 };//TODO --  comment for production
 
-                    if (SOT!=null)
+                    if (SOT != null && SOT.Any(v => v == 1))
                     {
                         //2.Send SOT to tester and wait for result
                         GpibCommDataModel TestResult = await GlobalIF.TesterIF.GetTestResultAsync(mbSession, SOT, DUT_CS, timeout, ct, progress);

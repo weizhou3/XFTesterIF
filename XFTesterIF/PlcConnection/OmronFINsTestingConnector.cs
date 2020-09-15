@@ -87,8 +87,22 @@ namespace XFTesterIF.PLCConnection
 
                     string plcRxStr = OmronFINsProcessor.GenericRdPLC(PlcMemArea.WR, "379", "383", PlcPort);
                     CommData = OmronFINsProcessor.ParseSOT(plcRxStr);//Extract SOT
+                    
                     if (plcRxStr != null)
                     {
+#region debug
+
+                        List<string> debugMsg = new List<string>();
+                        debugMsg.Add($"From PLC connector, current stage: {getSOTstage(CommData)}");
+                        //debugMsg.Add("From PLC connector, current stage:" + getSOTstage(CommData));
+                        //debugMsg.Add(retString);
+                        report.DebugMsg = true;
+                        report.DebugMsgs.Clear();
+                        report.DebugMsgs.AddRange(debugMsg);
+                        progress.Report(report);
+
+#endregion
+
                         switch (getSOTstage(CommData))
                         {
                             case 0:
@@ -124,6 +138,19 @@ namespace XFTesterIF.PLCConnection
 
             if (SOTready)
             {
+#region debug
+
+                List<string> debugMsg = new List<string>();
+                debugMsg.Add("From PLC connector, current SOT: ");
+                //debugMsg.Add("From PLC connector, current stage:" + getSOTstage(CommData));
+                debugMsg.Add(string.Join("", CommData.SOT));
+                report.DebugMsg = true;
+                report.DebugMsgs.Clear();
+                report.DebugMsgs.AddRange(debugMsg);
+                progress.Report(report);
+
+#endregion
+
                 return CommData.SOT;
             }
             else
