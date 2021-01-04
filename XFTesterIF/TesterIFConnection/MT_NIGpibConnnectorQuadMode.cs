@@ -19,7 +19,7 @@ namespace XFTesterIF.TesterIFConnection
         //public event Action<ProgressReportModel> ProgressChanged;
         //public Progress<ProgressReportModel> progress { get; set; } = new Progress<ProgressReportModel>();
         // = new Progress<ProgressReportModel>();
-        public string MappingCS_DUT { get; private set; }
+        public string MappingCS_DUT { get; private set; } 
         //private MessageBasedSession mbSession { get; set; }
         public SerialPort GpibPort { get; private set; }
         public string ResourceName { get; private set; }
