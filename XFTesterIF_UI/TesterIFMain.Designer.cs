@@ -651,7 +651,8 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 20);
             this.label2.TabIndex = 131;
-            this.label2.Text = "Ver 2.4.3";
+            this.label2.Text = "Ver 2.4.5";
+            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // tBoxSendSOT
             // 
@@ -716,6 +717,7 @@
             this.cbDebugMode.Text = "DebugMode";
             this.cbDebugMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cbDebugMode.UseVisualStyleBackColor = false;
+            this.cbDebugMode.Visible = false;
             this.cbDebugMode.CheckedChanged += new System.EventHandler(this.cbDebugMode_CheckedChanged);
             // 
             // TesterIFMain

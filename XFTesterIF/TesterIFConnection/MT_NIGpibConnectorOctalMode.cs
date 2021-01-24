@@ -39,7 +39,7 @@ namespace XFTesterIF.TesterIFConnection
         }
         
         /// <summary>
-        /// Get the Test Result from Tester
+        /// Get the Test Result from Tester -- 2.5.0 version -- remove SITES? checking, wait for 50ms instead
         /// </summary>
         /// <param name="SOT">SOT array</param>
         /// <param name="timeout_ms">EOT time out</param>
@@ -48,6 +48,154 @@ namespace XFTesterIF.TesterIFConnection
         /// <returns>Test Result in Commd Data Model</returns>
         public async Task<GpibCommDataModel> GetTestResultAsync(MessageBasedSession mbSession, int[]SOT, 
             int[]DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
+        {
+            DateTimeOffset startTime = DateTimeOffset.Now;
+            GpibCommDataModel retResult = new GpibCommDataModel();
+            ProgressReportModel report = new ProgressReportModel();
+            double totalSteps = 2;
+            bool timedOut = false;
+            bool canceled = false;
+            string BINStr = null;
+
+            //Simplified version 2.5.0
+            //1. Issue SRQ, delay __ms, send SOT and wait for BIN
+            //2. Parse BIN and send to PLC
+
+            //Task1. 
+            await Task.Run(() =>
+            {
+                string retString=null;
+                List<string> activeDUTs = MTGpibProcessor.GetActiveDUT(SOT, DUT_CS);
+                string SOTStr = MTGpibProcessor.GetSOTStr(SOT, DUT_CS);
+
+                report.PercentageCompleted = (int)(1 / totalSteps * 100);
+                report.StageMsg = "Send SOT then wait BIN";
+                report.CS = SOT;
+                progress.Report(report);
+
+                //Issue SRQ
+                NIGpibHelper.GpibWrite(mbSession, "rsv \\x60\r"); //spbyte: 0110 0000
+                
+                Thread.Sleep(30); //30ms delay between SRQ and SOT str
+                
+                //send SOT str to tester
+                NIGpibHelper.GpibWrite(mbSession, "wrt\n" + SOTStr + "\r");
+
+                //Wait BIN
+                while (true)//implementing original gpibstage 14
+                {
+                    if (ct.IsCancellationRequested || canceled)
+                    {
+                        canceled = true;
+                        break;
+                    }
+                    if (DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds > timeout_ms || timedOut)
+                    {
+                        timedOut = true;
+                        break;
+                    }
+
+                    if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                    {
+                        #region debug
+                        List<string> debugMsg = new List<string>();
+                        debugMsg.Add("From MT Octal Mode: 1/2 retSting: " + retString);
+                        debugMsg.Add("BinStr Received in : " + DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds.ToString());
+                        report.DebugMsg = true;
+                        report.DebugMsgs.Clear();
+                        report.DebugMsgs.AddRange(debugMsg);
+                        progress.Report(report);
+                        #endregion
+
+                        break;
+                    }
+
+                    if (GlobalIF.DebugMode)
+                    {
+                        break;
+                    }
+                    //retString = NIGpibHelper.GpibRead(mbSession);--2019.5.23
+                    //if (retString!=null)--2019.5.23
+                    else if (BINStr == null || !MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
+                    {
+                        NIGpibHelper.GpibWrite(mbSession, "rd #50\r");
+                        Thread.Sleep(200);
+                        retString = NIGpibHelper.GpibRead(mbSession);
+
+
+                        if (retString.Contains("A BIN") || retString.Contains("B BIN") || retString.Contains("C BIN") || retString.Contains("D BIN")
+                            || retString.Contains("E BIN") || retString.Contains("F BIN") || retString.Contains("G BIN") || retString.Contains("H BIN"))
+                        {
+                            BINStr += retString;
+
+                        }
+                    }
+                }
+            });            
+
+            //Task2. Parse the string then return CommData
+            if (timedOut)
+            {
+                //mbSession.Dispose();
+                //report.ClrReport();
+                //report.ErrMsg = "EOT has timed out";
+                //progress.Report(report);
+                throw new TimeoutException("EOT has timed out");
+            }
+            else if (canceled)
+            {
+                //mbSession.Dispose();
+                report.ErrMsg = "Testing operation has been canceled";
+                progress.Report(report);
+                ct.ThrowIfCancellationRequested();
+                return null;
+            }
+            else if (GlobalIF.DebugMode)
+            {
+                throw new NotImplementedException("DebugMode cycle compeleted in MT8 mode");
+            }
+            else
+            {   
+                retResult = MTGpibProcessor.GpibDecipher(BINStr, DUT_CS);
+
+#region
+                //debug
+                List<string> debugMsg = new List<string>();
+                debugMsg.Add("From MT Octal Mode 3/3: BINStr..");
+                debugMsg.Add(BINStr);
+                //debugMsg.Add("From MT Octal Mode 3/3 2/2: Parsed BIN result..");
+                //debugMsg.AddRange(retResult.);
+                debugMsg.Add("Complete in : " + DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds.ToString());
+                report.DebugMsg = true;
+                report.DebugMsgs.Clear();
+                report.DebugMsgs.AddRange(debugMsg);
+                progress.Report(report);
+#endregion
+
+                BINStr = null;
+
+                //report.ClrReport();
+                report.PercentageCompleted = (int)(2 / totalSteps * 100);
+                report.StageMsg = "BIN result obtained, Test cycle finished..";
+                report.CS = SOT;
+                report.BIN = retResult.BIN;
+                progress.Report(report);
+
+                //mbSession.Dispose();
+                return retResult;
+            }
+        }
+
+        /// <summary>
+        /// Get the Test Result from Tester 2.4.4 version -- wait for SITES? response
+        /// </summary>
+        /// <param name="SOT">SOT array</param>
+        /// <param name="timeout_ms">EOT time out</param>
+        /// <param name="ct">Cancellation Token</param>
+        /// <param name="progress">Progress Report</param>
+        /// <returns>Test Result in Commd Data Model</returns>
+        public async Task<GpibCommDataModel> GetTestResultAsync244(MessageBasedSession mbSession, int[] SOT,
+            int[] DUT_CS, int timeout_ms, CancellationToken ct, IProgress<ProgressReportModel> progress)
         {
             DateTimeOffset startTime = DateTimeOffset.Now;
             GpibCommDataModel retResult = new GpibCommDataModel();
@@ -65,7 +213,7 @@ namespace XFTesterIF.TesterIFConnection
             //Task1. Issue SRQ then wait SITES?
             await Task.Run(() =>
             {
-                string retString=null;
+                string retString = null;
 
                 //Issue SRQ
                 //NIGpibHelper.GpibWrite(mbSession, "rsv \\x00\r"); //reset spbyte
@@ -78,7 +226,7 @@ namespace XFTesterIF.TesterIFConnection
                 //Wait for SITES?
                 while (true)
                 {
-#region debug
+                    #region debug
 
                     List<string> debugMsg = new List<string>();
                     debugMsg.Add("From MT Octal Mode: 1/3 issued SRQ waiting for SITES?..");
@@ -88,7 +236,7 @@ namespace XFTesterIF.TesterIFConnection
                     report.DebugMsgs.AddRange(debugMsg);
                     progress.Report(report);
                     //BINStr = "A BIN 2 F BIN 7 E BIN 1";//TODO -- commment for production
-#endregion
+                    #endregion
                     if (ct.IsCancellationRequested || canceled)
                     {
                         canceled = true;
@@ -132,7 +280,7 @@ namespace XFTesterIF.TesterIFConnection
 
                     Thread.Sleep(10);
 
-#region debug
+                    #region debug
 
                     List<string> debugMsg = new List<string>();
                     debugMsg.Add("From MT Octal Mode: 2/3 1/2 waiting BIN.." + "SOT = " + string.Join("", SOT));
@@ -142,7 +290,7 @@ namespace XFTesterIF.TesterIFConnection
                     report.DebugMsgs.AddRange(debugMsg);
                     progress.Report(report);
 
-#endregion
+                    #endregion
 
                     while (true)//implementing original gpibstage 14
                     {
@@ -156,10 +304,10 @@ namespace XFTesterIF.TesterIFConnection
                             timedOut = true;
                             break;
                         }
-                        
+
                         if (BINStr != null && MTGpibProcessor.CheckBinComplete(activeDUTs, BINStr))
                         {
-#region debug
+                            #region debug
 
                             debugMsg.Add("From MT Octal Mode: 2/3 2/2 retSting: " + retString);
                             debugMsg.Add("BinStr Received in : " + DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds.ToString());
@@ -167,7 +315,7 @@ namespace XFTesterIF.TesterIFConnection
                             report.DebugMsgs.Clear();
                             report.DebugMsgs.AddRange(debugMsg);
                             progress.Report(report);
-#endregion
+                            #endregion
 
                             break;
                         }
@@ -193,7 +341,7 @@ namespace XFTesterIF.TesterIFConnection
                             }
                         }
                     }
-                }); 
+                });
             }
 
             //Task3. Parse the string then return CommData
@@ -218,22 +366,22 @@ namespace XFTesterIF.TesterIFConnection
                 throw new NotImplementedException("DebugMode cycle compeleted in MT8 mode");
             }
             else
-            {   
+            {
                 retResult = MTGpibProcessor.GpibDecipher(BINStr, DUT_CS);
 
-#region
+                #region
                 //debug
                 List<string> debugMsg = new List<string>();
-                debugMsg.Add("From MT Octal Mode 3/3 1/2: BINStr..");
+                debugMsg.Add("From MT Octal Mode 3/3: BINStr..");
                 debugMsg.Add(BINStr);
-                debugMsg.Add("From MT Octal Mode 3/3 2/2: Parsed BIN result..");
-                debugMsg.AddRange(retResult.RxBIN);
+                //debugMsg.Add("From MT Octal Mode 3/3 2/2: Parsed BIN result..");
+                //debugMsg.AddRange(retResult.);
                 debugMsg.Add("Complete in : " + DateTimeOffset.Now.Subtract(startTime).TotalMilliseconds.ToString());
                 report.DebugMsg = true;
                 report.DebugMsgs.Clear();
                 report.DebugMsgs.AddRange(debugMsg);
                 progress.Report(report);
-#endregion
+                #endregion
 
                 BINStr = null;
 

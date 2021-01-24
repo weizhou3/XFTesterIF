@@ -103,7 +103,16 @@ namespace XFTesterIF
                         {
                             //4. Parse test result and send result to PLC
                             TestResult = parseTestResult(TestResult);
-                            //GlobalIF.plcTestingConnection.SendResult(TestResult);
+#region
+                            List<string> debugMsg = new List<string>();
+                            debugMsg.Add("From test worker: TestResult..");
+                            debugMsg.AddRange(TestResult.RxBIN);
+                            report.DebugMsg = true;
+                            report.DebugMsgs.Clear();
+                            report.DebugMsgs.AddRange(debugMsg);
+                            progress.Report(report);
+#endregion
+                            GlobalIF.plcTestingConnection.SendResult(TestResult);
                         }
                         else
                         {
@@ -210,6 +219,8 @@ namespace XFTesterIF
             lines.Add("cmdType: " + result.cmdType);
             lines.Add("EOT: " + string.Join(" ", result.EOT));
             lines.Add("RxStr: " + result.RxStr);
+            lines.Add("RxBIN:");
+            lines.AddRange(result.RxBIN);
             return lines;
         }
     }

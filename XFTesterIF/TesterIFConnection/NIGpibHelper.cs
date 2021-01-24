@@ -16,6 +16,7 @@ namespace XFTesterIF.TesterIFConnection
             {
                 string textToWrite = ReplaceCommonEscapeSequences(TxStr);
                 mbSession.RawIO.Write(TxStr);
+                //mbSession.RawIO.BeginRead
                 return true;
             }
             catch (Exception) { return false; }
